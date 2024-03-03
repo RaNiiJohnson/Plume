@@ -12,8 +12,8 @@ const app = express();
 
 // middleware
 app.use(cors({ origin: true }));
-// app.use(helmet());
-// app.use(morgan("common"));
+app.use(helmet());
+app.use(morgan("common"));
 app.use(express.json());
 app.use(cookieParser());
 

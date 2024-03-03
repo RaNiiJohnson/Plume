@@ -58,3 +58,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+body::-webkit-scrollbar,
+.userList::-webkit-scrollbar {
+  width: 3px;
+}
+
+body::-webkit-scrollbar-thumb,
+.userList,
+::-webkit-scrollbar-thumb {
+  background: hwb(0 47% 53%);
+}
