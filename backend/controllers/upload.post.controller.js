@@ -32,7 +32,9 @@ module.exports.upload = async (req, res) => {
   console.log(req.file);
   try {
     const { posterId, description, artist, title, lyrics } = req.body;
-    const pochette = process.env.BASE_URL + "pochettes/" + filename;
+    const pochette = filename
+      ? process.env.BASE_URL + "pochettes/" + filename
+      : process.env.BASE_URL + "pochettes/default-pochette.jpg";
     console.log(posterId);
     const post = await createPost({
       posterId,

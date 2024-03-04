@@ -1,11 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
-import Markdown from 'react-markdown';
-import { useParams } from 'react-router';
-import { getPost } from '../actions/postAction';
+import { useQuery } from "@tanstack/react-query";
+import colorThief from "colorthief";
+import { useState } from "react";
+import { useParams } from "react-router";
+import { getPost } from "../actions/postAction";
 
+const PostView: React.FC = () => {
+  const [backgroundColor, setBackgroundColor] = useState("");
 
-export default function PostView() {
-  const { id } = useParams()
+  const { id } = useParams();
   const { data, error, isError, isLoading } = useQuery({
     queryKey: ["Post"],
     queryFn: getPost,
@@ -15,23 +17,65 @@ export default function PostView() {
 
   if (isLoading) return <>loading</>;
 
-  const post = data && data.find(post => post._id === id)
-  const lyrics = post?.lyrics.split('\n\n')
+  const post = data && data.find((post) => post._id === id);
+  const lyrics = post?.lyrics.split("\n\n");
 
-  const markdown = `
-   >## ${post?.artist} 
-   > ${post?.title}
-  `
+  if (!post) return <div>No post found</div>;
 
-  return <div className="prose dark:prose-invert" ><Markdown>
-    {markdown}
-    </Markdown>
-    <div>
-      {lyrics?.map((lines, index) => (
-        <div key={index}>{lines.split('\n').map((l, i) => (
-            <span key={i}>{l}<br/></span>
-        ))}<br/></div>
-      ))}
-    </div>
-    </div>
-}
+  const imageUrl = post.pochette;
+  const thief = new colorThief();
+
+  const image = new Image();
+  image.crossOrigin = "Anonymous";
+  image.src = imageUrl;
+
+  image.onload = () => {
+    const dominantColor = thief.getColor(image);
+    const result = thief.getPalette(image);
+    const rgbColor = `rgb(${dominantColor.join(",")})`;
+    const rgbColorPrime = `rgb(${result[result.length - 1].join(",")})`;
+    console.log(rgbColor);
+    console.log(rgbColorPrime);
+    setBackgroundColor(rgbColorPrime);
+  };
+
+  return (
+    <>
+      <div
+        className="flex w-full px-4 py-10 "
+        style={{ backgroundColor: backgroundColor }}
+      >
+        <div>
+          <img
+            crossOrigin="anonymous"
+            src={post.pochette}
+            alt=""
+            className="w-[30vw] max-w-52"
+          />
+        </div>
+        <div className="text-white mix-blend-hard-light">
+          <div>{post.description}</div>
+          <div>{post.artist}</div>
+          <div>{post.description}</div>
+        </div>
+      </div>
+      <div className="max-w-2xl m-auto prose dark:prose-invert">
+        <div>
+          {lyrics?.map((lines, index) => (
+            <div key={index}>
+              {lines.split("\n").map((line, i) => (
+                <span key={i}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+              <br />
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default PostView;

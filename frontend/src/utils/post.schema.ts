@@ -8,6 +8,7 @@ export const PostSchema = z.object({
   title: z.string(),
   lyrics: z.string(),
   likers: z.array(z.string()),
+  pochette: z.string(),
   comments: z.object({
     commenterId: z.string(),
     commenterPseudo: z.string(),
