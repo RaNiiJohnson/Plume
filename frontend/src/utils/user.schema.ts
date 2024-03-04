@@ -7,8 +7,6 @@ export const UserSchema = z.object({
   password: z.string(),
 });
 
-export type userType = z.infer<typeof UserSchema>;
-
 export const UsersSchema = z.array(UserSchema);
 
 export const UsersResponseSchema = z.object({
@@ -18,3 +16,7 @@ export const UsersResponseSchema = z.object({
 export const UserResponseSchema = z.object({
   user: UserSchema,
 });
+
+export type userType = z.infer<typeof UserSchema>;
+
+export type usersType = z.infer<typeof UsersSchema>;

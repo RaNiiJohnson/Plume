@@ -8,50 +8,63 @@ import { Heart, MessageCircle } from "lucide-react";
 import Markdown from "react-markdown";
 import { CardBody, CardContainer, CardItem } from "../../components/ui/3d-card";
 import { Button } from "../../components/ui/button";
+import { usersType } from "../../utils/user.schema";
 
-export const Post = ({ post }: { post: PostType }) => {
+const limiterText = (text: string) => {
+  const words = text.replace(/[^a-zA-Z\s]/g, "").split("");
+  const limiter = Math.random() * 100 + 50;
+  if (words.length > limiter) {
+    return words.slice(0, limiter).join("") + "...";
+  }
+
+  return text;
+};
+
+export const Post = ({ post, users }: { post: PostType; users: usersType }) => {
+  const poster = users.find((user) => user._id === post.posterId);
   return (
-    <CardContainer className="inter-var">
-      <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] w-auto sm:w-[35rem] h-auto rounded-xl p-6 border  ">
+    // <Link to={`/post/${post._id}`}>
+    <CardContainer className="mt-2 inter-var">
+      <CardBody className="bg-gray-50 relative group/card  dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] dark:bg-black dark:border-white/[0.2] border-black/[0.1] h-auto rounded-xl p-6  ">
         <CardItem
           translateZ="50"
           className="text-xl font-bold text-neutral-600 dark:text-white"
         >
           {post.artist} ~ <span className="text-primary ">{post.title}</span>
         </CardItem>
-        <CardItem
-          as="p"
-          translateZ="60"
-          className="max-w-sm mt-2 text-sm text-neutral-500 dark:text-neutral-300"
-        >
-            {post.description}
-        </CardItem>
-        <CardItem translateZ="100" className="w-full mt-4 line-clamp-3">
-          <Markdown  className="prose whitespace-pre-wrap dark:prose-invert">
-          {post.lyrics}
+        <CardItem translateZ="100" className="w-full mt-4">
+          <Markdown className="prose whitespace-pre-wrap dark:prose-invert">
+            {limiterText(post.lyrics)}
           </Markdown>
         </CardItem>
-        <div className="flex items-end justify-end mt-5">
-          <CardItem
-            translateZ={20}
-            as="button"
-            className="text-xs rounded-xl"
-          >
-            <Button variant={"ghost"}>
-              <Heart />
-            </Button>
+        <div className="flex items-center justify-between mt-5">
+          <CardItem translateZ={20} as="button" className="text-xs rounded-xl">
+            {poster?.pseudo}
           </CardItem>
-          <CardItem
-            translateZ={20}
-            as="button"
-            className="text-xs rounded-xl"
-          > <Button variant={"ghost"}>
-              <MessageCircle />
-            </Button>
-          </CardItem>
+          <div>
+            <CardItem
+              translateZ={20}
+              as="button"
+              className="text-xs rounded-xl"
+            >
+              <Button variant={"ghost"}>
+                <Heart />
+              </Button>
+            </CardItem>
+            <CardItem
+              translateZ={20}
+              as="button"
+              className="text-xs rounded-xl"
+            >
+              <Button variant={"ghost"}>
+                <MessageCircle />
+              </Button>
+            </CardItem>
+          </div>
         </div>
       </CardBody>
     </CardContainer>
+    // </Link>
   );
 };
 

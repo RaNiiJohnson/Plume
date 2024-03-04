@@ -22,6 +22,9 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    pochette: {
+      type: String,
+    },
     likers: {
       type: [String],
       required: true,

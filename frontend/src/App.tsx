@@ -1,41 +1,30 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Spotlight } from "./components/ui/Spotlight";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Main from "./features/layout/Main";
+import Home from "./pages/Home";
+import PostView from "./pages/PostView";
 
-// const getPost = async () => {
-//   const res = await fetch("http://localhost:5000/api/posts", {
-//     method: "GET",
-//     headers: {
-//       "content-Type": "application/json",
-//     },
-//   });
-//   const data = await res.json();
 
-//   return data;
-//   // console.log(data);
-//   // .then(PostsResponseSchema.parse);
-// };
-
-function App() {
-  // const { data, error, isError, isLoading } = useQuery({
-  //   queryKey: ["Posts"],
-  //   queryFn: getPost,
-  // });
-
-  // if (isError || error) return <p>Something went wrong</p>;
-
-  // if (isLoading) return <>loading</>;
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Main />,
+    children: [
+      {
+        index: true,
+        element: <Home />
+      },
+      {
+        path: "post/:id",
+        element: <PostView />
+      },
+    ]
+  }
+])
+const App = () => {
 
   return (
-    <div>
-      <Spotlight
-        className="left-0 -top-40 md:left-60 md:-top-20"
-        fill="white"
-      />
-      {/* {data?.post.map((p) => (
-        <div key={p._id}>{p.artist}</div>
-      ))} */}
-    </div>
+    <RouterProvider router={router} />
   );
-}
+};
 
 export default App;

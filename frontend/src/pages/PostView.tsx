@@ -21,8 +21,6 @@ export default function PostView() {
   const markdown = `
    >## ${post?.artist} 
    > ${post?.title}
-   
- 
   `
 
   return <div className="prose dark:prose-invert" ><Markdown>
@@ -36,5 +34,4 @@ export default function PostView() {
       ))}
     </div>
     </div>
-  
 }
