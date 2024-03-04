@@ -17,7 +17,6 @@ app.use(morgan("common"));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static("uploads"));
-app.use(express.static("pochette"));
 
 //jwt
 app.get("*0", checkUser);

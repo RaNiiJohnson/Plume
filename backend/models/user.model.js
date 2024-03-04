@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     },
     picture: {
       type: String,
-      default: process.env.BASE_URL + "random-user.png",
+      default: process.env.BASE_URL + "users/random-user.png",
     },
     password: {
       type: String,

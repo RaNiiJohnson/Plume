@@ -1,10 +1,11 @@
 const multer = require("multer");
 const { createPost } = require("../services/post.service");
+const UserModel = require("../models/user.model");
 
 let filename;
 const multerConfig = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, "./uploads/pochettes/");
+    callback(null, "./uploads/users/");
   },
   filename: async (req, file, callback) => {
     const ext = file.mimetype.split("/")[1];
@@ -30,20 +31,19 @@ module.exports.uploadImage = upload.single("photo");
 
 module.exports.upload = async (req, res) => {
   console.log(req.file);
-  try {
-    const { posterId, description, artist, title, lyrics } = req.body;
-    const pochette = process.env.BASE_URL + "pochettes/" + filename;
-    console.log(posterId);
-    const post = await createPost({
-      posterId,
-      description,
-      artist,
-      title,
-      lyrics,
-      pochette,
+  await UserModel.findByIdAndUpdate(
+    { _id: req.body.id },
+    {
+      $set: {
+        picture: process.env.BASE_URL + "users/" + filename,
+      },
+    },
+    { new: true, upsert: true, setDefaultsOnInsert: true }
+  )
+    .then((docs) => {
+      res.status(200).json(docs);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
     });
-    res.status(200).json(post);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
 };
