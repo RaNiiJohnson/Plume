@@ -29,7 +29,7 @@ function Home() {
 
   return (
     <>
-      <div className="absolute h-[40rem] w-full rounded-md flex md:items-center md:justify-center -top-0 -left-32 antialiased bg-grid-white/[0.02] overflow-hidden">
+      <div className="absolute h-[40rem] -z-0 w-full rounded-md flex md:items-center md:justify-center -top-0 antialiased bg-grid-white/[0.02] overflow-hidden">
         <Spotlight
           className="left-0 -top-40 md:left-60 md:-top-20"
           fill="white"

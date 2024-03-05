@@ -3,9 +3,11 @@ import colorThief from "colorthief";
 import { useState } from "react";
 import { useParams } from "react-router";
 import { getPost } from "../actions/postAction";
+import { CardBody, CardContainer, CardItem } from "../components/ui/3d-card";
 
 const PostView: React.FC = () => {
   const [backgroundColor, setBackgroundColor] = useState("");
+  const [bgColor, setBgColor] = useState("");
 
   const { id } = useParams();
   const { data, error, isError, isLoading } = useQuery({
@@ -37,30 +39,46 @@ const PostView: React.FC = () => {
     console.log(rgbColor);
     console.log(rgbColorPrime);
     setBackgroundColor(rgbColorPrime);
+    setBgColor(rgbColor);
   };
 
   return (
     <>
       <div
-        className="flex w-full px-4 py-10 "
-        style={{ backgroundColor: backgroundColor }}
+        className="z-10 w-full "
+        style={{
+          backgroundImage: `linear-gradient(to bottom, ${bgColor}, ${backgroundColor})`,
+        }}
       >
-        <div>
-          <img
-            crossOrigin="anonymous"
-            src={post.pochette}
-            alt=""
-            className="w-[30vw] max-w-52"
-          />
-        </div>
-        <div className="text-white mix-blend-hard-light">
-          <div>{post.description}</div>
-          <div>{post.artist}</div>
-          <div>{post.description}</div>
+        <div className="flex items-center justify-between gap-4 px-4 py-10 m-auto max-w-7xl">
+          <div className="text-white mix-blend-hard-light">
+            <div className="text-2xl font-semibold ">{post.title}</div>
+            <div>{post.artist}</div>
+            <div className="max-w-sm mt-2 text-sm text-white/40">
+              {post.description}
+            </div>
+          </div>
+          <div className="overflow-hidden">
+            <CardContainer className="inter-var">
+              <CardBody className=" group/card">
+                <CardItem translateZ="100" className="w-full ">
+                  <img
+                    crossOrigin="anonymous"
+                    src={post.pochette}
+                    alt="pochette"
+                    height="1000"
+                    width="1000"
+                    className=" w-[30vw] max-w-52 group-hover/card:shadow-xl"
+                  />
+                </CardItem>
+              </CardBody>
+            </CardContainer>
+            <img />
+          </div>
         </div>
       </div>
-      <div className="max-w-2xl m-auto prose dark:prose-invert">
-        <div>
+      <div className="max-w-3xl m-auto font-light prose dark:prose-invert">
+        <div className="font-victor">
           {lyrics?.map((lines, index) => (
             <div key={index}>
               {lines.split("\n").map((line, i) => (

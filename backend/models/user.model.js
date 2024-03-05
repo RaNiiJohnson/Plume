@@ -33,7 +33,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.statics.login = async function (pseudo, password) {
+userSchema.statics.signIn = async function (pseudo, password) {
   const user = await this.findOne({ pseudo });
   if (user) {
     const auth = await bcrypt.compare(password, user.password);
@@ -43,6 +43,16 @@ userSchema.statics.login = async function (pseudo, password) {
     throw Error("incorrect password");
   }
   throw Error("Incorrect pseudo");
+};
+
+userSchema.statics.signup = async function (pseudo, password) {
+  const salt = await bcrypt.genSalt();
+
+  const hash = await bcrypt.hash(password, salt);
+
+  const user = await this.create({ pseudo, password: hash });
+
+  return user;
 };
 
 const UserModel = mongoose.model("user", userSchema);

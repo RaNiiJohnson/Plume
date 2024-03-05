@@ -1,8 +1,10 @@
+import { useQuery } from "@tanstack/react-query";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Main from "./features/layout/Main";
+import { fetchToken } from "./actions/userAction";
 import Home from "./pages/Home";
+import Main from "./pages/Main";
 import PostView from "./pages/PostView";
-
+import { UidContext } from "./utils/AppContext";
 
 const router = createBrowserRouter([
   {
@@ -11,19 +13,29 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />
+        element: <Home />,
       },
       {
         path: "post/:id",
-        element: <PostView />
+        element: <PostView />,
       },
-    ]
-  }
-])
+    ],
+  },
+]);
 const App = () => {
+  const { data, isError } = useQuery({
+    queryKey: ["Token"],
+    queryFn: fetchToken,
+  });
+
+  if (isError) {
+    return;
+  }
 
   return (
-    <RouterProvider router={router} />
+    <UidContext.Provider value={data ?? ""}>
+      <RouterProvider router={router} />
+    </UidContext.Provider>
   );
 };
 

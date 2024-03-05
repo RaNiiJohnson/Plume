@@ -3,8 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { buttonVariants } from "../../components/ui/button";
-import { PostType, PostsType } from "../../utils/post.schema";
+import { PostType, PostsType } from "../../../utils/post.schema";
+import { buttonVariants } from "../../ui/button";
 
 const linesVariants = {
   visible: { x: 0, opacity: 1 },
@@ -54,7 +54,7 @@ export default function SearchBar() {
       <div
         className={clsx(
           result ? "rounded-md rounded-b-none" : "rounded-md",
-          "transition flex items-center gap-1 p-2  bg-secondary"
+          "transition flex items-center gap-1 p-2  bg-secondary "
         )}
       >
         <label htmlFor="search">
@@ -72,7 +72,7 @@ export default function SearchBar() {
           value={result}
           onChange={(e) => handleChange(e.target.value)}
           id="search"
-          className="bg-transparent w-36 focus:outline-none"
+          className="w-24 bg-transparent md:w-36 focus:outline-none"
         />
         <X
           onClick={() => setResult("")}
@@ -83,12 +83,12 @@ export default function SearchBar() {
           size={20}
         />
       </div>
-      {result && (
+      {result && data && (
         <motion.div
           variants={transitionVariants}
           animate="visible"
           initial="hidden"
-          className="absolute z-50 flex flex-col items-start p-1 overflow-hidden border-2 rounded-md min-w-48 max-w-56 top-10 bg-popover text-popover-foreground "
+          className="absolute z-50 flex flex-col mt-4 overflow-hidden overflow-y-auto border-2 rounded-md shadow-md search max-h-60 items-starts min-w-48 max-w-56 top-9 bg-popover text-secondary-foreground"
         >
           <AnimatePresence mode="popLayout">
             {data &&
@@ -103,7 +103,8 @@ export default function SearchBar() {
                   key={post._id}
                 >
                   <div>
-                    {post.artist} ~ {post.title}
+                    {post.artist} ~{" "}
+                    <span className="font-protest text-wrap">{post.title}</span>
                   </div>
                 </MotionLines>
               ))}

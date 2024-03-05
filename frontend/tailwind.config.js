@@ -85,6 +85,8 @@ export default {
       },
       fontFamily: {
         protest: "protest",
+        playpenSans: "playpenSans",
+        victor: "victor",
       },
     },
   },

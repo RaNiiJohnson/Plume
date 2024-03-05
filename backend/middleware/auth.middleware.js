@@ -24,16 +24,18 @@ module.exports.checkUser = (req, res, next) => {
 module.exports.requireAuth = (req, res, next) => {
   const token = req.cookies.jwt;
   if (token) {
-    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+    jwt.verify(token, process.env.SECRET, async (err, decodedToken) => {
       if (err) {
-        console.log(err);
-        res.send(200).json("no token");
+        console.error(err);
+        return res.status(200).json({ user: "no token" });
       } else {
         console.log(decodedToken.id);
+        res.locals.user = decodedToken;
         next();
       }
     });
   } else {
-    console.log("No token");
+    console.log("No token !");
+    return res.status(200).json({ user: "no token" });
   }
 };

@@ -11,7 +11,7 @@ import {
 import React from "react";
 import { getPost } from "../../actions/postAction";
 import { getUsers } from "../../actions/userAction";
-import { Post } from "../../features/posts/Post";
+import { Post } from "../features/posts/Post";
 import { Table, TableBody } from "./table";
 
 export const HeroParallax = () => {
@@ -79,14 +79,12 @@ export const HeroParallax = () => {
           <Table className="max-w-2xl m-auto bg-secondary/25">
             <TableBody>
               {dataPost?.map((post, index) => (
-                <div key={post._id}>
-                  <Post
-                    post={post}
-                    index={index}
-                    key={post._id}
-                    users={dataUser}
-                  />
-                </div>
+                <Post
+                  post={post}
+                  index={index}
+                  key={post._id}
+                  users={dataUser}
+                />
               ))}
             </TableBody>
           </Table>
@@ -98,10 +96,9 @@ export const HeroParallax = () => {
 
 export const Header = () => {
   return (
-    <div className="relative top-0 left-0 w-full px-4 py-20 mx-auto max-w-7xl md:py-40">
+    <div className="relative left-0 w-full px-4 py-20 mx-auto max-w-7xl md:py-40top-0">
       <h1 className="text-2xl font-bold md:text-7xl dark:text-white">
-        Découvrer, <span className="text-primary">partager</span> et ressenter
-        l'impact des textes
+        Découvrer, partager et ressenter l'impact des textes
       </h1>
       <p className="max-w-2xl mt-4 text-base md:text-xl dark:text-neutral-200">
         Bienvenue sur <span className="text-primary font-protest">Plume</span>
