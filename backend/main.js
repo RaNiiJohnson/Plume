@@ -19,9 +19,9 @@ app.use(cookieParser());
 app.use(express.static("uploads"));
 
 //jwt
-app.get("*0", checkUser);
+app.get("*", checkUser);
 app.get("/jwtId", requireAuth, (req, res) => {
-  res.status(200).send(res.locals.user._id);
+  res.status(200).send(res.locals.user.id);
 });
 
 // routes
