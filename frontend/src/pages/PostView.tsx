@@ -10,19 +10,25 @@ const PostView: React.FC = () => {
   const [bgColor, setBgColor] = useState("");
 
   const { id } = useParams();
-  const { data, error, isError, isLoading } = useQuery({
-    queryKey: ["Post"],
-    queryFn: getPost,
+
+  const {
+    data: post,
+    error,
+    isError,
+    isLoading,
+  } = useQuery({
+    queryKey: ["Post", id],
+    queryFn: () => getPost(String(id)),
+    enabled: id !== undefined,
   });
 
   if (isError || error) return <p>Something went wrong</p>;
 
   if (isLoading) return <>loading</>;
 
-  const post = data && data.find((post) => post._id === id);
-  const lyrics = post?.lyrics.split("\n\n");
-
   if (!post) return <div>No post found</div>;
+
+  const lyrics = post.lyrics.split("\n\n");
 
   const imageUrl = post.pochette;
   const thief = new colorThief();

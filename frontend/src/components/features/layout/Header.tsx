@@ -11,12 +11,11 @@ import SearchBar from "./SearchBar";
 export default function Header() {
   const [backgroundColor, setBackgroundColor] = useState("");
   const { id } = useParams();
-  const { data } = useQuery({
-    queryKey: ["Post"],
-    queryFn: getPost,
+  const { data: post } = useQuery({
+    queryKey: ["Post", id],
+    queryFn: () => getPost(String(id)),
+    enabled: Boolean(id),
   });
-
-  const post = data && data.find((post) => post._id === id);
 
   if (post) {
     const imageUrl = post.pochette;

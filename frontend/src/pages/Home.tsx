@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useQuery } from "@tanstack/react-query";
-import { getPost } from "../actions/postAction";
+import { getPost, getPosts } from "../actions/postAction";
 import { getUsers } from "../actions/userAction";
 import { Welcome } from "../components/Welcome";
 import { Spotlight } from "../components/ui/Spotlight";
@@ -12,8 +12,8 @@ function Home() {
     isError: postError,
     isLoading: postLoading,
   } = useQuery({
-    queryKey: ["Posts"],
-    queryFn: getPost,
+    queryKey: ["posts"],
+    queryFn: getPosts,
   });
 
   const { data: dataUser, isError: userError } = useQuery({

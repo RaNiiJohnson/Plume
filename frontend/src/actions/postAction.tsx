@@ -4,9 +4,15 @@ import { PostType, PostsType } from "../utils/post.schema";
 
 const url: string | undefined = process.env.REACT_APP_URL;
 
-export const getPost = async () => {
+export const getPosts = async () => {
   const res = await fetch(url + "api/posts");
   const data: PostsType = await res.json();
+  return data;
+};
+
+export const getPost = async (postId: string) => {
+  const res = await fetch(url + "api/posts/" + postId);
+  const data: PostType = await res.json();
   return data;
 };
 

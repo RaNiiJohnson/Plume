@@ -61,10 +61,7 @@ module.exports.likeAndDislikeController = async (req, res) => {
 module.exports.getPostController = async (req, res) => {
   try {
     const post = await getPost(req.params);
-    res.status(200).json({
-      post,
-      message: "Post has been fetched Successfully",
-    });
+    res.status(200).json(post);
   } catch (err) {
     console.log(err);
     res.status(500).json({

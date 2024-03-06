@@ -3,8 +3,13 @@ import { z } from "zod";
 export const UserSchema = z.object({
   _id: z.string(),
   pseudo: z.string(),
-  picture: z.string(),
+  picture: z.string().optional(),
   password: z.string(),
+});
+
+export const userData = z.object({
+  user: UserSchema,
+  token: z.string(),
 });
 
 export const UsersSchema = z.array(UserSchema);
@@ -18,5 +23,7 @@ export const UserResponseSchema = z.object({
 });
 
 export type userType = z.infer<typeof UserSchema>;
+
+export type userDataType = z.infer<typeof userData>;
 
 export type usersType = z.infer<typeof UsersSchema>;

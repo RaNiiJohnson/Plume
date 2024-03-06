@@ -9,7 +9,7 @@ import {
   useTransform,
 } from "framer-motion";
 import React from "react";
-import { getPost } from "../../actions/postAction";
+import { getPosts } from "../../actions/postAction";
 import { getUsers } from "../../actions/userAction";
 import { Post } from "../features/posts/Post";
 import { Table, TableBody } from "./table";
@@ -20,8 +20,8 @@ export const HeroParallax = () => {
     isError: postError,
     isLoading: postLoading,
   } = useQuery({
-    queryKey: ["Posts"],
-    queryFn: getPost,
+    queryKey: ["posts"],
+    queryFn: getPosts,
   });
 
   const { data: dataUser, isError: userError } = useQuery({
