@@ -17,9 +17,7 @@ module.exports.signUp = async (req, res) => {
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge });
     res.status(200).json({
-      id: user._id,
-      pseudo: user.pseudo,
-      picture: user.picture,
+      _id: user._id,
       token,
     });
   } catch (error) {
@@ -36,9 +34,7 @@ module.exports.signIn = async (req, res) => {
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge });
     res.status(200).json({
-      id: user._id,
-      pseudo: user.pseudo,
-      picture: user.picture,
+      _id: user._id,
       token,
     });
   } catch (error) {

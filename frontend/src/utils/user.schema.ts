@@ -4,13 +4,10 @@ export const UserSchema = z.object({
   _id: z.string(),
   pseudo: z.string(),
   picture: z.string().optional(),
-  password: z.string(),
 });
 
 export const userData = z.object({
-  id: z.string(),
-  pseudo: z.string(),
-  picture: z.string().optional(),
+  _id: z.string(),
   token: z.string(),
 });
 

@@ -2,8 +2,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { FormEventHandler } from "react";
-import { signInFn, signUpFn } from "../../../actions/userAction";
+import { signInFn, signOutFn, signUpFn } from "../../../actions/userAction";
 import { userType } from "../../../utils/user.schema";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../ui/alert-dialog";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../ui/card";
 import {
@@ -34,6 +44,12 @@ export function AuthButton({ post }: { post?: string }) {
     },
   });
 
+  const signOut = useMutation({
+    mutationFn: signOutFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
   const isLoggedIn = !!localStorage.getItem("user");
 
   const handleSignUp: FormEventHandler<HTMLFormElement> = async (event) => {
@@ -142,7 +158,33 @@ export function AuthButton({ post }: { post?: string }) {
           </DialogContent>
         </Dialog>
       ) : (
-        <Profil />
+        <>
+          <Profil />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size={"sm"} variant={"destructive"}>
+                Déconnexion
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Déconnexion?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Souhaitez-vous vraiment vous déconnecter?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Non</AlertDialogCancel>
+                <Button
+                  onClick={() => signOut.mutate()}
+                  disabled={signOut.isPending}
+                >
+                  {signOut.isPending ? "Déconnexion" : "Oui"}
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
       )}
     </>
   );

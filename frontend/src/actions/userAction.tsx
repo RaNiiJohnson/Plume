@@ -1,3 +1,4 @@
+import axios from "axios";
 import { userDataType, userType, usersType } from "../utils/user.schema";
 
 const url: string | undefined = process.env.REACT_APP_URL;
@@ -5,31 +6,40 @@ const url: string | undefined = process.env.REACT_APP_URL;
 // get users function
 export const getUsers = async () => {
   const res = await fetch(url + "api/users");
-  const data: usersType = await res.json();
+  const data: Omit<usersType, "password"> = await res.json();
 
   return data;
 };
 
 // get user function
-export const getUser = async (userId: string) => {
+export const getUser = async (userId?: string) => {
   const res = await fetch(url + "api/users/" + userId);
   const data: userType = await res.json();
 
   return data;
 };
+
 export const getCurrentUser = async () => {
-  const dataString = localStorage.getItem("user");
-  let data: userDataType | null = null;
+  const res = await fetch(url + "api/users");
 
-  if (dataString) {
-    try {
-      data = JSON.parse(dataString);
-    } catch (error) {
-      console.error(error);
+  if (res.ok) {
+    const dataUsers: usersType = await res.json();
+
+    const dataItems = localStorage.getItem("user") as string;
+
+    if (dataItems) {
+      try {
+        const data = JSON.parse(dataItems);
+        const currentUser = dataUsers.find((user) => user._id === data._id);
+        console.log(currentUser);
+        return currentUser || null;
+      } catch (error) {
+        console.error(error);
+      }
     }
+  } else {
+    return null; // Return null if the fetch request fails
   }
-
-  return data;
 };
 
 // sign up function
@@ -69,6 +79,18 @@ export const signInFn = async (postData: Omit<userType, "_id">) => {
       localStorage.setItem("user", JSON.stringify(data));
       return data;
     } else console.log(res);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//upload picture
+export const uploadFn = async (formData: FormData) => {
+  const config = { headers: { "Content-Type": "multipart/form-data" } };
+
+  try {
+    const res = await axios.post(url + "api/users/upload", formData, config);
+    console.log(res);
   } catch (error) {
     console.log(error);
   }

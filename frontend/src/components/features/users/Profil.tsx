@@ -1,9 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import clsx from "clsx";
+import { Check, ImageUp, Undo } from "lucide-react";
+import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Link } from "react-router-dom";
 import { getPosts } from "../../../actions/postAction";
-import { getCurrentUser } from "../../../actions/userAction";
+import {
+  getCurrentUser,
+  signOutFn,
+  uploadFn,
+} from "../../../actions/userAction";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../ui/alert-dialog";
 import { Avatar } from "../../ui/avatar";
-import { Button } from "../../ui/button";
+import { Button, buttonVariants } from "../../ui/button";
 import {
   Sheet,
   SheetClose,
@@ -14,10 +32,12 @@ import {
   SheetTrigger,
 } from "../../ui/sheet";
 import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
-import { LoggedInButton } from "../layout/LoggedInButton";
 
 export function Profil() {
-  // const isLoggedIn = !!localStorage.getItem("user");
+  const [file, setFile] = useState<File>();
+  const [profil, setProfil] = useState("");
+  const queryClient = useQueryClient();
+
   const { data: user } = useQuery({
     queryKey: ["currentUser"],
     queryFn: getCurrentUser,
@@ -28,75 +48,155 @@ export function Profil() {
     queryFn: getPosts,
   });
 
-  const postUSer = posts?.filter((post) => post.posterId === user?.id);
-  console.log(user);
-  console.log(posts);
+  const upload = useMutation({
+    mutationFn: (formData: FormData) => uploadFn(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+
+  const signOut = useMutation({
+    mutationFn: signOutFn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+
+  const postUSer = posts?.filter((post) => post.posterId === user?._id);
+
+  const onInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+      setProfil(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  const handleClick: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+
+    if (file && user) {
+      const formData = new FormData();
+      formData.append("id", user._id);
+      formData.append("photo", file);
+
+      try {
+        upload.mutate(formData);
+        setProfil("");
+      } catch (error) {
+        console.error("Upload failed:", error);
+      }
+    } else {
+      console.log("No file or user");
+    }
+  };
+
   return (
     <Sheet>
       <SheetTrigger>
-        <Button variant="outline" size="sm">
+        <div className={buttonVariants({ variant: "outline", size: "sm" })}>
           <Avatar className="w-6 h-6 mr-2">
             <img crossOrigin="anonymous" src={user?.picture}></img>
           </Avatar>
           {user?.pseudo}
-        </Button>
+        </div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <img
-            className="w-[100px]"
-            crossOrigin="anonymous"
-            src={user?.picture}
-          />
+          <form onSubmit={handleClick}>
+            <input
+              className="hidden"
+              type="file"
+              name="photo"
+              onChange={onInputChange}
+              id="file"
+              accept=".jpg, .jpeg, .png"
+            />
+            <div className="relative block m-auto bg-blue-600 size-52">
+              <label htmlFor="file">
+                <img
+                  className="cursor-pointer size-52"
+                  crossOrigin="anonymous"
+                  src={profil ? profil : user?.picture}
+                />
+                <div
+                  className={clsx(
+                    buttonVariants({ variant: "outline", size: "icon" }),
+                    "absolute -bottom-4 -right-4"
+                  )}
+                >
+                  <ImageUp />
+                </div>
+              </label>
+              {profil && (
+                <>
+                  <Button
+                    variant={"outline"}
+                    size={"icon"}
+                    type="submit"
+                    className="absolute -bottom-4 -right-4"
+                  >
+                    <Check />
+                  </Button>
+                  <Button
+                    onClick={() => setProfil("")}
+                    variant={"outline"}
+                    size={"icon"}
+                    className="absolute -bottom-4 -left-4"
+                  >
+                    <Undo />
+                  </Button>
+                </>
+              )}
+            </div>
+          </form>
           <SheetTitle>{user?.pseudo}</SheetTitle>
         </SheetHeader>
-        <div className="max-h-[60vh] overflow-y-scroll posts">
+        <div className="max-h-[55vh] overflow-y-scroll posts">
           <Table className="w-full m-auto bg-secondary/25">
             <TableBody>
               {postUSer?.map((post) => (
                 <TableRow key={post._id}>
                   <TableCell>
-                    <SheetClose asChild>
-                      <Link
-                        className="block w-full h-full "
-                        key={post._id}
-                        to={`/post/${post._id}`}
-                      >
-                        {" "}
+                    <Link
+                      className="block w-full h-full "
+                      key={post._id}
+                      to={`/post/${post._id}`}
+                    >
+                      <SheetClose asChild>
                         <img
                           crossOrigin="anonymous"
                           src={post.pochette}
                           className="bg-contain size-10"
                         />
-                      </Link>
-                    </SheetClose>
+                      </SheetClose>
+                    </Link>
                   </TableCell>
                   <TableCell>
-                    <SheetClose asChild>
-                      <Link
-                        className="block w-full h-full "
-                        key={post._id}
-                        to={`/post/${post._id}`}
-                      >
+                    <Link
+                      className="block w-full h-full "
+                      key={post._id}
+                      to={`/post/${post._id}`}
+                    >
+                      <SheetClose asChild>
                         <span className="font-bold text-wrap">
                           {post.artist}
                         </span>
-                      </Link>
-                    </SheetClose>
+                      </SheetClose>
+                    </Link>
                   </TableCell>
                   <TableCell>
-                    <SheetClose asChild>
-                      <Link
-                        className="block w-full h-full "
-                        key={post._id}
-                        to={`/post/${post._id}`}
-                      >
+                    <Link
+                      className="block w-full h-full "
+                      key={post._id}
+                      to={`/post/${post._id}`}
+                    >
+                      <SheetClose asChild>
                         <span className="font-protest text-wrap">
                           {" "}
                           {post.title}
                         </span>
-                      </Link>
-                    </SheetClose>
+                      </SheetClose>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
@@ -104,7 +204,30 @@ export function Profil() {
           </Table>
         </div>
         <SheetFooter className="fixed right-10 bottom-4">
-          <LoggedInButton />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size={"sm"} variant={"destructive"}>
+                Déconnexion
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Déconnexion?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Souhaitez-vous vraiment vous déconnecter?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Non</AlertDialogCancel>
+                <Button
+                  onClick={() => signOut.mutate()}
+                  disabled={signOut.isPending}
+                >
+                  {signOut.isPending ? "Déconnexion" : "Oui"}
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </SheetFooter>
       </SheetContent>
     </Sheet>
