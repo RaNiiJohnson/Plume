@@ -8,7 +8,9 @@ export const UserSchema = z.object({
 });
 
 export const userData = z.object({
-  user: UserSchema,
+  id: z.string(),
+  pseudo: z.string(),
+  picture: z.string().optional(),
   token: z.string(),
 });
 

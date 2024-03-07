@@ -1,7 +1,6 @@
 import { Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PostType } from "../../../utils/post.schema";
-import { usersType } from "../../../utils/user.schema";
 import { TableCell, TableRow } from "../../ui/table";
 
 const limiterText = (text: string, limiter: number) => {
@@ -12,14 +11,7 @@ const limiterText = (text: string, limiter: number) => {
 
   return text;
 };
-export const Post = ({
-  post,
-  index,
-}: {
-  post: PostType;
-  users: usersType;
-  index: number;
-}) => {
+export const Post = ({ post, index }: { post: PostType; index: number }) => {
   // const poster = users.find((user) => user._id === post.posterId);
   return (
     <TableRow className="flex my-2 text-xl max-sm:text-lg">

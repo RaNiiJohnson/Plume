@@ -13,10 +13,15 @@ module.exports.signUp = async (req, res) => {
   const { pseudo, password } = req.body;
 
   try {
-    const user = await UserModel.signup(pseudo, password);
+    const user = await UserModel.signUp(pseudo, password);
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge });
-    res.status(200).json({ user, token });
+    res.status(200).json({
+      id: user._id,
+      pseudo: user.pseudo,
+      picture: user.picture,
+      token,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error });
@@ -30,7 +35,12 @@ module.exports.signIn = async (req, res) => {
     const user = await UserModel.signIn(pseudo, password);
     const token = createToken(user._id);
     res.cookie("jwt", token, { httpOnly: true, maxAge });
-    res.status(200).json({ user, token });
+    res.status(200).json({
+      id: user._id,
+      pseudo: user.pseudo,
+      picture: user.picture,
+      token,
+    });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error });
@@ -38,6 +48,10 @@ module.exports.signIn = async (req, res) => {
 };
 
 module.exports.logout = (req, res) => {
-  res.cookie("jwt", "", { maxAge: 1 });
-  res.redirect("/");
+  try {
+    res.cookie("jwt", "", { maxAge: 1 });
+    res.redirect("/");
+  } catch (error) {
+    res.status(400).json({ error });
+  }
 };

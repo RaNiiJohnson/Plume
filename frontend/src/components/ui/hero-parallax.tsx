@@ -79,12 +79,7 @@ export const HeroParallax = () => {
           <Table className="max-w-2xl m-auto bg-secondary/25">
             <TableBody>
               {dataPost?.map((post, index) => (
-                <Post
-                  post={post}
-                  index={index}
-                  key={post._id}
-                  users={dataUser}
-                />
+                <Post post={post} index={index} key={post._id} />
               ))}
             </TableBody>
           </Table>
