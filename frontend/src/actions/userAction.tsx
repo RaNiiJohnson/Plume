@@ -1,9 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
 import { userDataType, userType, usersType } from "../utils/user.schema";
 
 const url: string | undefined = process.env.REACT_APP_URL;
 
-// get user function
+// get users function
 export const getUsers = async () => {
   const res = await fetch(url + "api/users");
   const data: usersType = await res.json();
@@ -11,19 +10,44 @@ export const getUsers = async () => {
   return data;
 };
 
+// get user function
+export const getUser = async (userId: string) => {
+  const res = await fetch(url + "api/users/" + userId);
+  const data: userType = await res.json();
+
+  return data;
+};
+export const getCurrentUser = async () => {
+  const dataString = localStorage.getItem("user");
+  let data: userDataType | null = null;
+
+  if (dataString) {
+    try {
+      data = JSON.parse(dataString);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return data;
+};
+
 // sign up function
 export const signUpFn = async (postData: Omit<userType, "_id">) => {
   try {
-    const res = await fetch("http://localhost:5000/api/users/signUp", {
+    const res = await fetch(url + "api/users/signUp", {
       method: "POST",
       body: JSON.stringify(postData),
       headers: {
         "content-Type": "application/json",
       },
     });
-    const data: userDataType = await res.json();
-    localStorage.setItem("user", JSON.stringify(data));
-    return data;
+    if (res.ok) {
+      const data: userDataType = await res.json();
+      console.log(data, res);
+      localStorage.setItem("user", JSON.stringify(data));
+      return data;
+    } else console.log(res);
   } catch (error) {
     console.log(error);
   }
@@ -32,16 +56,19 @@ export const signUpFn = async (postData: Omit<userType, "_id">) => {
 // sign in function
 export const signInFn = async (postData: Omit<userType, "_id">) => {
   try {
-    const res = await fetch("http://localhost:5000/api/users/signIn", {
+    const res = await fetch(url + "api/users/signIn", {
       method: "POST",
       body: JSON.stringify(postData),
       headers: {
         "content-Type": "application/json",
       },
     });
-    const data: userDataType = await res.json();
-    localStorage.setItem("user", JSON.stringify(data));
-    return data;
+    if (res.ok) {
+      const data: userDataType = await res.json();
+      console.log(data, res);
+      localStorage.setItem("user", JSON.stringify(data));
+      return data;
+    } else console.log(res);
   } catch (error) {
     console.log(error);
   }
@@ -50,33 +77,8 @@ export const signInFn = async (postData: Omit<userType, "_id">) => {
 // sign out function
 export const signOutFn = async () => {
   try {
-    await fetch("http://localhost:5000/api/users/signOut", {
-      method: "POST",
-    });
     localStorage.removeItem("user");
   } catch (error) {
     console.log(error);
   }
 };
-
-// custom hook for authentication
-
-const useAuth = () => {
-  const signUp = useMutation({
-    mutationFn: (userData: Omit<userType, "_id">) => signUpFn(userData),
-  });
-
-  const signIn = useMutation({
-    mutationFn: (userData: Omit<userType, "_id">) => signInFn(userData),
-  });
-
-  const signOut = useMutation({
-    mutationFn: signOutFn,
-  });
-
-  const isLoggedIn = !!localStorage.getItem("user");
-
-  return { signUp, signIn, signOut, isLoggedIn };
-};
-
-export default useAuth;

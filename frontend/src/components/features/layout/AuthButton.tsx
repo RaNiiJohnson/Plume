@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { FormEventHandler } from "react";
-import useAuth from "../../../actions/userAction";
+import { signInFn, signUpFn } from "../../../actions/userAction";
+import { userType } from "../../../utils/user.schema";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../ui/card";
 import {
@@ -14,9 +16,25 @@ import {
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
-
+import { Profil } from "../users/Profil";
 export function AuthButton({ post }: { post?: string }) {
-  const { signUp, signIn, isLoggedIn } = useAuth();
+  const queryClient = useQueryClient();
+
+  const signUp = useMutation({
+    mutationFn: (userData: Omit<userType, "_id">) => signUpFn(userData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+
+  const signIn = useMutation({
+    mutationFn: (userData: Omit<userType, "_id">) => signInFn(userData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+
+  const isLoggedIn = !!localStorage.getItem("user");
 
   const handleSignUp: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -30,16 +48,8 @@ export function AuthButton({ post }: { post?: string }) {
       password,
     };
 
-    signIn.mutate(userData);
-    // signUp.isPending
-    // () => mutation.mutate()}>
-    //           {mutation.isPending ? (
-    //             <Loader size={12} className="mr-2" />
-    //           ) : (
-    //             <LogOutIcon size={12} className="mr-2" />
-    //           )
-    // form.reset();
-    if (isLoggedIn) console.log("loggedIn yo");
+    signUp.mutate(userData);
+    // if (isLoggedIn) console.log("loggedIn yo");
   };
   const handleSignIn: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -53,16 +63,7 @@ export function AuthButton({ post }: { post?: string }) {
       password,
     };
 
-    signUp.mutate(userData);
-    // signUp.isPending
-    // () => mutation.mutate()}>
-    //           {mutation.isPending ? (
-    //             <Loader size={12} className="mr-2" />
-    //           ) : (
-    //             <LogOutIcon size={12} className="mr-2" />
-    //           )
-    // form.reset();
-    if (isLoggedIn) console.log("loggedIn yo");
+    signIn.mutate(userData);
   };
 
   return (
@@ -123,14 +124,14 @@ export function AuthButton({ post }: { post?: string }) {
                   <CardContent className="space-y-2">
                     <form onSubmit={handleSignIn}>
                       <div className="space-y-1">
-                        <Label htmlFor="current">Pseudo</Label>
-                        <Input id="current" />
+                        <Label htmlFor="pseudo">Pseudo</Label>
+                        <Input id="pseudo" name="pseudo" />
                       </div>
                       <div className="space-y-1">
-                        <Label htmlFor="new">Mot de passe</Label>
-                        <Input id="new" type="password" />
+                        <Label htmlFor="password">Mot de passe</Label>
+                        <Input id="password" name="password" type="password" />
                       </div>
-                      <Button type="submit" disabled={signUp.isPending}>
+                      <Button type="submit" disabled={signIn.isPending}>
                         {signUp.isPending ? "Connexion.." : "Se connecter"}
                       </Button>
                     </form>
@@ -141,7 +142,7 @@ export function AuthButton({ post }: { post?: string }) {
           </DialogContent>
         </Dialog>
       ) : (
-        <div>Dec</div>
+        <Profil />
       )}
     </>
   );

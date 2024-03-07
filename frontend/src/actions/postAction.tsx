@@ -10,6 +10,15 @@ export const getPosts = async () => {
   return data;
 };
 
+export const getPostsUser = async (userId: string) => {
+  const res = await fetch(url + "api/posts");
+  const data: PostsType = await res.json();
+  const results = data.filter((result) => {
+    return result.posterId === userId;
+  });
+  return results;
+};
+
 export const getPost = async (postId: string) => {
   const res = await fetch(url + "api/posts/" + postId);
   const data: PostType = await res.json();
