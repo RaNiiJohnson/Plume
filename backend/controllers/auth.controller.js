@@ -1,5 +1,6 @@
 const UserModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+const { signUpErrors, signInErrors } = require("../utils/errorsUtils");
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -21,8 +22,8 @@ module.exports.signUp = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ error });
+    const errors = signUpErrors(error);
+    res.status(400).json({ errors });
   }
 };
 
@@ -38,8 +39,8 @@ module.exports.signIn = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ error });
+    const errors = signInErrors(error);
+    res.status(400).json({ errors });
   }
 };
 

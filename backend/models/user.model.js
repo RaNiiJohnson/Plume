@@ -19,7 +19,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       max: 1024,
-      minlength: 6,
     },
   },
   {
@@ -33,6 +32,23 @@ const userSchema = new mongoose.Schema(
 //   next();
 // });
 
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+userSchema.statics.signUp = async function (pseudo, password) {
+  const salt = await bcrypt.genSalt();
+
+  if (!strongPasswordRegex.test(password)) {
+    throw new Error("Le mot de passe n'est pas assez fort.");
+  }
+
+  const hash = await bcrypt.hash(password, salt);
+
+  const user = await this.create({ pseudo, password: hash });
+
+  return user;
+};
+
 userSchema.statics.signIn = async function (pseudo, password) {
   const user = await this.findOne({ pseudo });
   if (user) {
@@ -43,16 +59,6 @@ userSchema.statics.signIn = async function (pseudo, password) {
     throw Error("incorrect password");
   }
   throw Error("Incorrect pseudo");
-};
-
-userSchema.statics.signUp = async function (pseudo, password) {
-  const salt = await bcrypt.genSalt();
-
-  const hash = await bcrypt.hash(password, salt);
-
-  const user = await this.create({ pseudo, password: hash });
-
-  return user;
 };
 
 const UserModel = mongoose.model("user", userSchema);
