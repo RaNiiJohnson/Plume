@@ -1,14 +1,15 @@
 module.exports.signUpErrors = (err) => {
   let errors = { pseudo: "", password: "" };
 
-  if (err.message.includes("pseudo"))
-    errors.pseudo = "Pseudo incorrect ou déjà pris";
+  if (err.message.includes("pseudo")) errors.pseudo = "Pseudo incorrect.";
 
-  if (err.message.includes("Le mot de passe "))
+  if (err.message.includes("password"))
     errors.password = "Le mot de passe n'est pas assez fort.";
 
-  if (err.code === 11000 && Object.keys(err.keyValue)[0].includes("pseudo"))
-    errors.pseudo = "Ce pseudo est déjà pris";
+  if (err.message.includes("no-pass")) errors.password = "Votre mot de passe";
+
+  if (err.message.includes("pseudo-exist"))
+    errors.pseudo = "Ce pseudo est déjà pris.";
 
   return errors;
 };

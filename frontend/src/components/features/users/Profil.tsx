@@ -8,8 +8,6 @@ import {
 import clsx from "clsx";
 import { Check, ImageUp, Undo } from "lucide-react";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
-import { Link } from "react-router-dom";
-import { getPosts } from "../../../actions/postAction";
 import { getCurrentUser, uploadFn } from "../../../actions/userAction";
 import {
   AlertDialog,
@@ -25,14 +23,13 @@ import { Avatar } from "../../ui/avatar";
 import { Button, buttonVariants } from "../../ui/button";
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "../../ui/sheet";
-import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
+import { Table, TableBody } from "../../ui/table";
 
 type setType = {
   signOut: UseMutationResult<void, Error, void, unknown>;
@@ -48,10 +45,10 @@ export function Profil({ signOut }: setType) {
     queryFn: getCurrentUser,
   });
 
-  const { data: posts } = useQuery({
-    queryKey: [user?.pseudo, "posts"],
-    queryFn: getPosts,
-  });
+  // const { data: posts } = useQuery({
+  //   queryKey: [user?.pseudo, "posts"],
+  //   queryFn: getPosts,
+  // });
 
   const upload = useMutation({
     mutationFn: (formData: FormData) => uploadFn(formData),
@@ -60,7 +57,7 @@ export function Profil({ signOut }: setType) {
     },
   });
 
-  const postUSer = posts?.filter((post) => post.posterId === user?._id);
+  // const postUSer = posts?.filter((post) => post.posterId === user?._id);
 
   const onInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -145,7 +142,7 @@ export function Profil({ signOut }: setType) {
             </div>
           </form>
           <SheetTitle>
-            <span className="m-auto p-3 text-xl justify-center flex">
+            <span className="flex justify-center p-3 m-auto text-xl">
               {user?.pseudo}
             </span>
           </SheetTitle>
@@ -153,7 +150,7 @@ export function Profil({ signOut }: setType) {
         <div className="max-h-[55vh] overflow-y-scroll posts">
           <Table className="w-full m-auto bg-secondary/25">
             <TableBody>
-              {postUSer?.map((post) => (
+              {/* {postUSer?.map((post) => (
                 <TableRow key={post._id}>
                   <TableCell>
                     <Link
@@ -198,7 +195,7 @@ export function Profil({ signOut }: setType) {
                     </Link>
                   </TableCell>
                 </TableRow>
-              ))}
+              ))} */}
             </TableBody>
           </Table>
         </div>

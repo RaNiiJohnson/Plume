@@ -1,12 +1,18 @@
 import axios from "axios";
 
-import { PostType, PostsType } from "../utils/post.schema";
+import { PostType, PostsResponseType, PostsType } from "../utils/post.schema";
 
 const url: string | undefined = process.env.REACT_APP_URL;
 
-export const getPosts = async () => {
-  const res = await fetch(url + "api/posts");
-  const data: PostsType = await res.json();
+// export const getPosts = async () => {
+//   const res = await fetch(url + "api/posts");
+//   const data: PostsType = await res.json();
+//   return data;
+// };
+
+export const getPosts = async (page?: number, perPage?: number) => {
+  const res = await fetch(url + `api/posts?page=${page}&perPage=${perPage}`);
+  const data: PostsResponseType = await res.json();
   return data;
 };
 

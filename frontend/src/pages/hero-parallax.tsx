@@ -9,21 +9,10 @@ import {
   useTransform,
 } from "framer-motion";
 import React from "react";
-import { getPosts } from "../../actions/postAction";
-import { getUsers } from "../../actions/userAction";
-import { Post } from "../features/posts/Post";
-import { Table, TableBody } from "./table";
+import { getUsers } from "../actions/userAction";
+import PostPagination from "../components/features/posts/PostPagination";
 
 export const HeroParallax = () => {
-  const {
-    data: dataPost,
-    isError: postError,
-    isLoading: postLoading,
-  } = useQuery({
-    queryKey: ["posts"],
-    queryFn: getPosts,
-  });
-
   const { data: dataUser, isError: userError } = useQuery({
     queryKey: ["users"],
     queryFn: getUsers,
@@ -54,10 +43,6 @@ export const HeroParallax = () => {
     springConfig
   );
 
-  if (userError || postError) return <p>Something went wrong</p>;
-
-  if (postLoading) return <>loading</>;
-
   if (!dataUser) return;
 
   return (
@@ -75,15 +60,7 @@ export const HeroParallax = () => {
         }}
         className=""
       >
-        <div className="flex flex-wrap mb-20 space-x-20 space-x-reverse">
-          <Table className="max-w-2xl m-auto bg-secondary/25">
-            <TableBody>
-              {dataPost?.map((post, index) => (
-                <Post post={post} index={index} key={post._id} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <PostPagination />
       </motion.div>
     </div>
   );
