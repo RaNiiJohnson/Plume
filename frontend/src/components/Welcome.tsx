@@ -1,4 +1,4 @@
-import { HeroParallax } from "./ui/hero-parallax";
+import { HeroParallax } from "../pages/hero-parallax";
 
 export function Welcome() {
   return <HeroParallax />;
