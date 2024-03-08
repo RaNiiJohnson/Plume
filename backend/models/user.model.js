@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
+const strongPasswordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 const userSchema = new mongoose.Schema(
   {
     pseudo: {
@@ -19,6 +22,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       max: 1024,
+      minLength: 8,
     },
   },
   {
@@ -32,14 +36,25 @@ const userSchema = new mongoose.Schema(
 //   next();
 // });
 
-const strongPasswordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
 userSchema.statics.signUp = async function (pseudo, password) {
   const salt = await bcrypt.genSalt();
 
-  if (!strongPasswordRegex.test(password)) {
-    throw new Error("Le mot de passe n'est pas assez fort.");
+  const exist = await this.findOne({ pseudo });
+
+  if (exist) {
+    throw new Error("pseudo-exist");
+  }
+
+  if (!pseudo || pseudo.length < 3) {
+    throw new Error("pseudo");
+  }
+
+  if (!strongPasswordRegex.test(password) && password.length > 1) {
+    throw new Error("password");
+  }
+
+  if (password.length < 1) {
+    throw new Error("no-pass");
   }
 
   const hash = await bcrypt.hash(password, salt);

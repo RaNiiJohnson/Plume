@@ -7,6 +7,10 @@ export const UserSchema = z.object({
 });
 
 export const userData = z.object({
+  errors: z.object({
+    pseudo: z.string().optional(),
+    password: z.string().optional(),
+  }),
   _id: z.string(),
   token: z.string(),
 });

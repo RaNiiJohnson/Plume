@@ -1,19 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { FormEventHandler } from "react";
-import { signInFn, signOutFn, signUpFn } from "../../../actions/userAction";
-import { userType } from "../../../utils/user.schema";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../../ui/alert-dialog";
+import { FormEventHandler, useState } from "react";
+import { signOutFn } from "../../../actions/userAction";
+import { userDataType, userType } from "../../../utils/user.schema";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../ui/card";
 import {
@@ -28,17 +18,76 @@ import { Label } from "../../ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { Profil } from "../users/Profil";
 export function AuthButton({ post }: { post?: string }) {
+  const [pseudoSigninError, setPseudoSigninError] = useState("");
+  const [passwordSigninError, setPasswordSigninError] = useState("");
+  const [pseudoSignupError, setPseudoSignupError] = useState("");
+  const [passwordSignupError, setPasswordSignupError] = useState("");
+  const isLogged = !!localStorage.getItem("user");
+
   const queryClient = useQueryClient();
 
+  const url: string | undefined = process.env.REACT_APP_URL;
+
   const signUp = useMutation({
-    mutationFn: (userData: Omit<userType, "_id">) => signUpFn(userData),
+    mutationFn: async (userData: Omit<userType, "_id">) => {
+      try {
+        const res = await fetch(url + "api/users/signUp", {
+          method: "POST",
+          body: JSON.stringify(userData),
+          headers: {
+            "content-Type": "application/json",
+          },
+        });
+        const data: userDataType = await res.json();
+        if (data.errors) {
+          setPseudoSignupError(data.errors.pseudo ?? "");
+          setPasswordSignupError(data.errors.password ?? "");
+        } else {
+          localStorage.setItem("user", JSON.stringify(data));
+          return data;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
+  // export const signInFn = async (postData: Omit<userType, "_id">) => {
+  //   const res = await fetch(url + "api/users/signIn", {
+  //     method: "POST",
+  //     body: JSON.stringify(postData),
+  //     headers: {
+  //       "content-Type": "application/json",
+  //     },
+  //   });
+  //   const data: userDataType = await res.json();
+  //   return data;
+  // };
 
   const signIn = useMutation({
-    mutationFn: (userData: Omit<userType, "_id">) => signInFn(userData),
+    mutationFn: async (userData: Omit<userType, "_id">) => {
+      try {
+        const res = await fetch(url + "api/users/signIn", {
+          method: "POST",
+          body: JSON.stringify(userData),
+          headers: {
+            "content-Type": "application/json",
+          },
+        });
+        const data: userDataType = await res.json();
+        if (data.errors) {
+          setPseudoSigninError(data.errors.pseudo ?? "");
+          setPasswordSigninError(data.errors.password ?? "");
+        } else {
+          localStorage.setItem("user", JSON.stringify(data));
+          return data;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
@@ -50,7 +99,6 @@ export function AuthButton({ post }: { post?: string }) {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
-  const isLoggedIn = !!localStorage.getItem("user");
 
   const handleSignUp: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -65,7 +113,6 @@ export function AuthButton({ post }: { post?: string }) {
     };
 
     signUp.mutate(userData);
-    // if (isLoggedIn) console.log("loggedIn yo");
   };
   const handleSignIn: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -84,7 +131,7 @@ export function AuthButton({ post }: { post?: string }) {
 
   return (
     <>
-      {!isLoggedIn ? (
+      {!isLogged ? (
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -120,10 +167,16 @@ export function AuthButton({ post }: { post?: string }) {
                       <div className="space-y-1">
                         <Label htmlFor="pseudo">Pseudo</Label>
                         <Input id="pseudo" name="pseudo" />
+                        <div className="text-sm text-red-600 ">
+                          {pseudoSignupError}
+                        </div>
                       </div>
                       <div className="space-y-1">
                         <Label htmlFor="password">Mot de passe</Label>
                         <Input id="password" name="password" type="password" />
+                        <div className="text-sm text-red-600 ">
+                          {passwordSignupError}
+                        </div>
                       </div>
                       <Button type="submit" disabled={signUp.isPending}>
                         {signIn.isPending ? "Connexion.." : "Se connecter"}
@@ -142,10 +195,16 @@ export function AuthButton({ post }: { post?: string }) {
                       <div className="space-y-1">
                         <Label htmlFor="pseudo">Pseudo</Label>
                         <Input id="pseudo" name="pseudo" />
+                        <div className="text-sm text-red-600 ">
+                          {pseudoSigninError}
+                        </div>
                       </div>
                       <div className="space-y-1">
                         <Label htmlFor="password">Mot de passe</Label>
                         <Input id="password" name="password" type="password" />
+                        <div className="text-sm text-red-600 ">
+                          {passwordSigninError}
+                        </div>
                       </div>
                       <Button type="submit" disabled={signIn.isPending}>
                         {signUp.isPending ? "Connexion.." : "Se connecter"}
@@ -159,31 +218,7 @@ export function AuthButton({ post }: { post?: string }) {
         </Dialog>
       ) : (
         <>
-          <Profil />
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button size={"sm"} variant={"destructive"}>
-                Déconnexion
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Déconnexion?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Souhaitez-vous vraiment vous déconnecter?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Non</AlertDialogCancel>
-                <Button
-                  onClick={() => signOut.mutate()}
-                  disabled={signOut.isPending}
-                >
-                  {signOut.isPending ? "Déconnexion" : "Oui"}
-                </Button>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Profil signOut={signOut} />
         </>
       )}
     </>

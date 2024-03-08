@@ -1,5 +1,6 @@
 import axios from "axios";
-import { userDataType, userType, usersType } from "../utils/user.schema";
+import { redirect } from "react-router";
+import { userType, usersType } from "../utils/user.schema";
 
 const url: string | undefined = process.env.REACT_APP_URL;
 
@@ -22,66 +23,12 @@ export const getUser = async (userId?: string) => {
 export const getCurrentUser = async () => {
   const res = await fetch(url + "api/users");
 
-  if (res.ok) {
-    const dataUsers: usersType = await res.json();
-
-    const dataItems = localStorage.getItem("user") as string;
-
-    if (dataItems) {
-      try {
-        const data = JSON.parse(dataItems);
-        const currentUser = dataUsers.find((user) => user._id === data._id);
-        console.log(currentUser);
-        return currentUser || null;
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  } else {
-    return null; // Return null if the fetch request fails
-  }
-};
-
-// sign up function
-export const signUpFn = async (postData: Omit<userType, "_id">) => {
-  try {
-    const res = await fetch(url + "api/users/signUp", {
-      method: "POST",
-      body: JSON.stringify(postData),
-      headers: {
-        "content-Type": "application/json",
-      },
-    });
-    if (res.ok) {
-      const data: userDataType = await res.json();
-      console.log(data, res);
-      localStorage.setItem("user", JSON.stringify(data));
-      return data;
-    } else console.log(res);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-// sign in function
-export const signInFn = async (postData: Omit<userType, "_id">) => {
-  try {
-    const res = await fetch(url + "api/users/signIn", {
-      method: "POST",
-      body: JSON.stringify(postData),
-      headers: {
-        "content-Type": "application/json",
-      },
-    });
-    if (res.ok) {
-      const data: userDataType = await res.json();
-      console.log(data, res);
-      localStorage.setItem("user", JSON.stringify(data));
-      return data;
-    } else console.log(res);
-  } catch (error) {
-    console.log(error);
-  }
+  const dataUsers: usersType = await res.json();
+  const dataItems = localStorage.getItem("user") as string;
+  const data = JSON.parse(dataItems);
+  const currentUser = dataUsers.find((user) => user._id === data._id);
+  if (!currentUser) return null;
+  return currentUser;
 };
 
 //upload picture
@@ -100,6 +47,7 @@ export const uploadFn = async (formData: FormData) => {
 export const signOutFn = async () => {
   try {
     localStorage.removeItem("user");
+    redirect("/");
   } catch (error) {
     console.log(error);
   }

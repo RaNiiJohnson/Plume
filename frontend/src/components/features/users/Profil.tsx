@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutationResult,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import clsx from "clsx";
 import { Check, ImageUp, Undo } from "lucide-react";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
 import { Link } from "react-router-dom";
 import { getPosts } from "../../../actions/postAction";
-import {
-  getCurrentUser,
-  signOutFn,
-  uploadFn,
-} from "../../../actions/userAction";
+import { getCurrentUser, uploadFn } from "../../../actions/userAction";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -33,7 +34,11 @@ import {
 } from "../../ui/sheet";
 import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
 
-export function Profil() {
+type setType = {
+  signOut: UseMutationResult<void, Error, void, unknown>;
+};
+
+export function Profil({ signOut }: setType) {
   const [file, setFile] = useState<File>();
   const [profil, setProfil] = useState("");
   const queryClient = useQueryClient();
@@ -50,13 +55,6 @@ export function Profil() {
 
   const upload = useMutation({
     mutationFn: (formData: FormData) => uploadFn(formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-    },
-  });
-
-  const signOut = useMutation({
-    mutationFn: signOutFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
@@ -93,12 +91,9 @@ export function Profil() {
   return (
     <Sheet>
       <SheetTrigger>
-        <div className={buttonVariants({ variant: "outline", size: "sm" })}>
-          <Avatar className="w-6 h-6 mr-2">
-            <img crossOrigin="anonymous" src={user?.picture}></img>
-          </Avatar>
-          {user?.pseudo}
-        </div>
+        <Avatar className="w-6 h-6 mr-2">
+          <img crossOrigin="anonymous" src={user?.picture}></img>
+        </Avatar>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
@@ -111,10 +106,10 @@ export function Profil() {
               id="file"
               accept=".jpg, .jpeg, .png"
             />
-            <div className="relative block m-auto bg-blue-600 size-52">
+            <div className="relative justify-center flex m-auto bg-blue-600 size-[25vh]">
               <label htmlFor="file">
                 <img
-                  className="cursor-pointer size-52"
+                  className="cursor-pointer size-[25vh] bg-cover"
                   crossOrigin="anonymous"
                   src={profil ? profil : user?.picture}
                 />
@@ -149,7 +144,11 @@ export function Profil() {
               )}
             </div>
           </form>
-          <SheetTitle>{user?.pseudo}</SheetTitle>
+          <SheetTitle>
+            <span className="m-auto p-3 text-xl justify-center flex">
+              {user?.pseudo}
+            </span>
+          </SheetTitle>
         </SheetHeader>
         <div className="max-h-[55vh] overflow-y-scroll posts">
           <Table className="w-full m-auto bg-secondary/25">
@@ -178,7 +177,7 @@ export function Profil() {
                       to={`/post/${post._id}`}
                     >
                       <SheetClose asChild>
-                        <span className="font-bold text-wrap">
+                        <span className="block h-full font-bold text-wrap">
                           {post.artist}
                         </span>
                       </SheetClose>
@@ -191,7 +190,7 @@ export function Profil() {
                       to={`/post/${post._id}`}
                     >
                       <SheetClose asChild>
-                        <span className="font-protest text-wrap">
+                        <span className="block h-full font-protest f text-wrap">
                           {" "}
                           {post.title}
                         </span>
@@ -220,7 +219,9 @@ export function Profil() {
               <AlertDialogFooter>
                 <AlertDialogCancel>Non</AlertDialogCancel>
                 <Button
-                  onClick={() => signOut.mutate()}
+                  onClick={() => {
+                    signOut.mutate();
+                  }}
                   disabled={signOut.isPending}
                 >
                   {signOut.isPending ? "Déconnexion" : "Oui"}

@@ -54,8 +54,8 @@ export default function Header() {
             <nav className="z-50 flex items-center gap-10 space-x-1">
               <SearchBar />
               <div className="flex items-center gap-2">
-                <ThemeToggle post={post?._id} />
                 <AuthButton post={post?._id} />
+                <ThemeToggle post={post?._id} />
               </div>
             </nav>
           </div>
