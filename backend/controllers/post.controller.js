@@ -1,3 +1,4 @@
+const PostModel = require("../models/post.model");
 const {
   createPost,
   updatePost,
@@ -71,14 +72,22 @@ module.exports.getPostController = async (req, res) => {
   }
 };
 module.exports.getAllPostController = async (req, res) => {
+  const page = parseInt(req.query.page) || 1; // numéro de page
+  const perPage = parseInt(req.query.perPage) || 10; //  nombre d'éléments par page
+
   try {
-    const post = await getAllPost();
-    res.status(200).json(post);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: "Post fetch failed",
-      err,
-    });
+    const totalCount = await PostModel.countDocuments();
+
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    const posts = await PostModel.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage) // Ignorer les éléments des pages précédentes
+      .limit(perPage); // Limitez le nombre de résultats par page
+
+    res.json({ posts, totalPages });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ message: "Error fetching posts", error });
   }
 };
