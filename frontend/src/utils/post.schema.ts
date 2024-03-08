@@ -20,7 +20,8 @@ export const PostSchema = z.object({
 export const PostsSchema = z.array(PostSchema);
 
 export const PostsResponseSchema = z.object({
-  post: PostsSchema,
+  posts: PostsSchema,
+  totalPages: z.number(),
 });
 
 export const PostResponseSchema = z.object({
@@ -29,3 +30,4 @@ export const PostResponseSchema = z.object({
 
 export type PostType = z.infer<typeof PostSchema>;
 export type PostsType = z.infer<typeof PostsSchema>;
+export type PostsResponseType = z.infer<typeof PostsResponseSchema>;

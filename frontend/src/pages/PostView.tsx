@@ -22,20 +22,12 @@ const PostView: React.FC = () => {
     enabled: id !== undefined,
   });
 
-  if (isError || error) return <p>Something went wrong</p>;
-
-  if (isLoading) return <>loading</>;
-
-  if (!post) return <div>No post found</div>;
-
-  const lyrics = post.lyrics.split("\n\n");
-
-  const imageUrl = post.pochette;
+  const imageUrl = post?.pochette;
   const thief = new colorThief();
 
   const image = new Image();
   image.crossOrigin = "Anonymous";
-  image.src = imageUrl;
+  image.src = imageUrl as string;
 
   image.onload = () => {
     const dominantColor = thief.getColor(image);
@@ -47,6 +39,13 @@ const PostView: React.FC = () => {
     setBackgroundColor(rgbColorPrime);
     setBgColor(rgbColor);
   };
+  if (isError || error) return <p>Something went wrong</p>;
+
+  if (isLoading) return <>loading</>;
+
+  if (!post) return <div>No post found</div>;
+
+  const lyrics = post.lyrics.split("\n\n");
 
   return (
     <>
