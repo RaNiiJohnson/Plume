@@ -1,5 +1,6 @@
 const multer = require("multer");
 const { createPost } = require("../services/post.service");
+const PostModel = require("../models/post.model");
 
 let filename;
 const multerConfig = multer.diskStorage({
@@ -8,7 +9,7 @@ const multerConfig = multer.diskStorage({
   },
   filename: async (req, file, callback) => {
     const ext = file.mimetype.split("/")[1];
-    filename = `post-${req.body.title}.${Date.now()}.${ext}`;
+    filename = `post-${req.body.artist}.${Date.now()}.${ext}`;
     callback(null, filename);
   },
 });
@@ -32,11 +33,11 @@ module.exports.upload = async (req, res) => {
   console.log(req.file);
   try {
     const { posterId, description, artist, title, lyrics } = req.body;
-    const pochette = filename
+    const pochette = req.file
       ? process.env.BASE_URL + "pochettes/" + filename
-      : process.env.BASE_URL + "pochettes/default-pochette.jpg";
+      : undefined;
     console.log(posterId);
-    const post = await createPost({
+    const post = await PostModel.create({
       posterId,
       description,
       artist,
