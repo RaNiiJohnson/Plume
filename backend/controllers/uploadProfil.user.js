@@ -28,24 +28,6 @@ const upload = multer({
 
 module.exports.uploadImage = upload.single("photo");
 
-// module.exports.upload = async (req, res) => {
-//   console.log(req.file);
-//   await UserModel.findByIdAndUpdate(
-//     { _id: req.body.id },
-//     {
-//       $set: {
-//         picture: process.env.BASE_URL + "users/" + filename,
-//       },
-//     },
-//     { new: true, upsert: true, setDefaultsOnInsert: true }
-//   )
-//     .then((docs) => {
-//       res.status(200).json(docs);
-//     })
-//     .catch((err) => {
-//       res.status(500).json({ error: err });
-//     });
-// };
 module.exports.upload = async (req, res) => {
   const pictureUrl = process.env.BASE_URL + "users/" + filename;
 

@@ -36,6 +36,7 @@ function Home() {
         />
       </div>
       <Welcome />
+      <div id="posts"></div>
     </>
   );
 }

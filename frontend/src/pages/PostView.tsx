@@ -5,7 +5,7 @@ import { useParams } from "react-router";
 import { getPost } from "../actions/postAction";
 import { CardBody, CardContainer, CardItem } from "../components/ui/3d-card";
 
-const PostView: React.FC = () => {
+const PostView = () => {
   const [backgroundColor, setBackgroundColor] = useState("");
   const [bgColor, setBgColor] = useState("");
 
@@ -83,7 +83,7 @@ const PostView: React.FC = () => {
         </div>
       </div>
       <div className="max-w-3xl m-auto font-light prose dark:prose-invert">
-        <div className="font-victor">
+        <div className="font-victor container">
           {lyrics?.map((lines, index) => (
             <div key={index}>
               {lines.split("\n").map((line, i) => (

@@ -4,7 +4,8 @@ module.exports.signUpErrors = (err) => {
   if (err.message.includes("pseudo")) errors.pseudo = "Pseudo incorrect.";
 
   if (err.message.includes("password"))
-    errors.password = "Le mot de passe n'est pas assez fort.";
+    errors.password =
+      "Essayez quelques mots au hasard. Vous n'avez pas besoin de caractères spéciaux.";
 
   if (err.message.includes("no-pass")) errors.password = "Votre mot de passe";
 

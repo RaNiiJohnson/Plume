@@ -1,51 +1,52 @@
-import axios from "axios";
-
-import { PostType, PostsResponseType, PostsType } from "../utils/post.schema";
+import { PostType, PostsResponseType } from "../utils/post.schema";
 
 const url: string | undefined = process.env.REACT_APP_URL;
 
-// export const getPosts = async () => {
-//   const res = await fetch(url + "api/posts");
-//   const data: PostsType = await res.json();
-//   return data;
-// };
-
+// get posts
 export const getPosts = async (page?: number, perPage?: number) => {
   const res = await fetch(url + `api/posts?page=${page}&perPage=${perPage}`);
   const data: PostsResponseType = await res.json();
   return data;
 };
 
-export const getPostsUser = async (userId: string) => {
-  const res = await fetch(url + "api/posts");
-  const data: PostsType = await res.json();
-  const results = data.filter((result) => {
-    return result.posterId === userId;
-  });
-  return results;
-};
-
+//get post
 export const getPost = async (postId: string) => {
   const res = await fetch(url + "api/posts/" + postId);
   const data: PostType = await res.json();
   return data;
 };
 
-export const addPost = async (data: PostType) => {
-  await axios.post(url + "api/posts/create-post/", data);
+// create post
+export const addPost = async (formData: FormData) => {
+  try {
+    const res = await fetch(url + "api/posts/create/", {
+      method: "POST",
+      body: JSON.stringify(formData),
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    const data = await res.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("Error adding post:", error);
+  }
 };
 
-export const likePost = async (postId: string, userId: string) => {
-  await axios({
-    method: "put",
-    url: url + "api/posts/like-post/" + postId,
-    data: { id: userId },
-  });
-};
+// //like post
+// export const likePost = async (postId: string, userId: string) => {
+//   await axios({
+//     method: "put",
+//     url: url + "api/posts/like-post/" + postId,
+//     data: { id: userId },
+//   });
+// };
 
-export const deletePost = async (postId: string) => {
-  await axios({
-    method: "put",
-    url: url + "api/posts/delete-post/" + postId,
-  });
-};
+// //delete poste
+// export const deletePost = async (postId: string) => {
+//   await axios({
+//     method: "put",
+//     url: url + "api/posts/delete-post/" + postId,
+//   });
+// };

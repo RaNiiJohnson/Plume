@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { FormEventHandler, useState } from "react";
+import { redirect } from "react-router";
 import { signOutFn } from "../../../actions/userAction";
 import { userDataType, userType } from "../../../utils/user.schema";
 import { Button } from "../../ui/button";
@@ -97,6 +98,7 @@ export function AuthButton({ post }: { post?: string }) {
     mutationFn: signOutFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      redirect("/#posts");
     },
   });
 

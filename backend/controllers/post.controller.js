@@ -1,3 +1,4 @@
+const fs = require("fs");
 const PostModel = require("../models/post.model");
 const {
   createPost,
@@ -71,6 +72,7 @@ module.exports.getPostController = async (req, res) => {
     });
   }
 };
+
 module.exports.getAllPostController = async (req, res) => {
   const page = parseInt(req.query.page) || 1; // numéro de page
   const perPage = parseInt(req.query.perPage) || 10; //  nombre d'éléments par page
@@ -90,4 +92,16 @@ module.exports.getAllPostController = async (req, res) => {
     console.error("Error fetching posts:", error);
     res.status(500).json({ message: "Error fetching posts", error });
   }
+};
+
+module.exports.readFile = async (req, res) => {
+  const file = req.file;
+  fs.readFile(file, "utf8", (err, data) => {
+    if (err) {
+      res.status(500).send("Erreur de lecture du fichier");
+      yy;
+      return;
+    }
+    res.send(data);
+  });
 };

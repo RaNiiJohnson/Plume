@@ -24,6 +24,7 @@ const postSchema = new mongoose.Schema(
     },
     pochette: {
       type: String,
+      default: process.env.BASE_URL + "pochettes/default-pochette.jpg",
     },
     likers: {
       type: [String],

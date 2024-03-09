@@ -49,9 +49,9 @@ userSchema.statics.signUp = async function (pseudo, password) {
     throw new Error("pseudo");
   }
 
-  if (!strongPasswordRegex.test(password) && password.length > 1) {
-    throw new Error("password");
-  }
+  // if (!strongPasswordRegex.test(password) && password.length > 1) {
+  //   throw new Error("password");
+  // }
 
   if (password.length < 1) {
     throw new Error("no-pass");

@@ -2,11 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import ColorThief from "colorthief";
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getPost } from "../../../actions/postAction";
 import { ThemeToggle } from "../../ThemeToggle";
 import { AuthButton } from "./AuthButton";
-import SearchBar from "./SearchBar";
 
 export default function Header() {
   const [backgroundColor, setBackgroundColor] = useState("");
@@ -45,14 +44,14 @@ export default function Header() {
       >
         <div className="flex items-center h-16 space-x-4 sm:justify-between sm:space-x-0">
           <div className="flex items-center justify-center pl-2 pr-3 text-xl rounded-md font-protest text-primary">
-            <Link to={"/"} className="flex items-center gap-1">
+            <a href="/#posts" className="flex items-center gap-1">
               Plume
-            </Link>
+            </a>
           </div>
 
           <div className="flex items-center justify-end flex-1 space-x-4">
             <nav className="z-50 flex items-center gap-10 space-x-1">
-              <SearchBar />
+              {/* <SearchBar /> */}
               <div className="flex items-center gap-2">
                 <AuthButton post={post?._id} />
                 <ThemeToggle post={post?._id} />
