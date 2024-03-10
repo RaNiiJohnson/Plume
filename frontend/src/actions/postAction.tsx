@@ -17,16 +17,19 @@ export const getPost = async (postId: string) => {
 };
 
 // create post
-export const addPost = async (formData: FormData) => {
+export const addPost = async (bodyContent: FormData) => {
+  const headersList = {
+    Accept: "*/*",
+  };
+
   try {
-    const res = await fetch(url + "api/posts/create/", {
+    const response = await fetch(url + "api/posts/create/", {
       method: "POST",
-      body: JSON.stringify(formData),
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      body: bodyContent,
+      headers: headersList,
     });
-    const data = await res.json();
+
+    const data = await response.text();
     console.log(data);
     return data;
   } catch (error) {
@@ -35,18 +38,67 @@ export const addPost = async (formData: FormData) => {
 };
 
 // //like post
-// export const likePost = async (postId: string, userId: string) => {
-//   await axios({
-//     method: "put",
-//     url: url + "api/posts/like-post/" + postId,
-//     data: { id: userId },
-//   });
-// };
+export const likePost = async (postId: string, userId: string) => {
+  const headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
 
-// //delete poste
-// export const deletePost = async (postId: string) => {
-//   await axios({
-//     method: "put",
-//     url: url + "api/posts/delete-post/" + postId,
-//   });
-// };
+  const bodyContent = JSON.stringify({
+    posterId: userId,
+  });
+
+  const response = await fetch(url + "api/posts/like-post/" + postId, {
+    method: "PUT",
+    body: bodyContent,
+    headers: headersList,
+  });
+
+  const data = await response.text();
+  console.log(data);
+};
+
+//delete poste
+export const deletePost = async (postId: string, posterId: string) => {
+  const headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  const bodyContent = JSON.stringify({
+    posterId,
+  });
+
+  const response = await fetch(url + "api/posts/delete-post/" + postId, {
+    method: "DELETE",
+    body: bodyContent,
+    headers: headersList,
+  });
+
+  const data = await response.text();
+  console.log(data);
+};
+
+// update post
+export const updatePost = async (
+  postData: Omit<PostType, "comments">,
+  postId: string
+) => {
+  const headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  const bodyContent = JSON.stringify({
+    postData,
+  });
+
+  const response = await fetch(url + "api/posts/update-post/" + postId, {
+    method: "PUT",
+    body: bodyContent,
+    headers: headersList,
+  });
+
+  const data = await response.text();
+  console.log(data);
+};

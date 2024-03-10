@@ -47,7 +47,7 @@ export const uploadFn = async (formData: FormData) => {
 export const signOutFn = async () => {
   try {
     localStorage.removeItem("user");
-    redirect("/");
+    return redirect("/");
   } catch (error) {
     console.log(error);
   }

@@ -37,7 +37,7 @@ module.exports.upload = async (req, res) => {
       ? process.env.BASE_URL + "pochettes/" + filename
       : undefined;
     console.log(posterId);
-    const post = await PostModel.create({
+    const post = await createPost({
       posterId,
       description,
       artist,

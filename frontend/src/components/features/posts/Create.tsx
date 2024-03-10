@@ -2,34 +2,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Image, Undo } from "lucide-react";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import { addPost } from "../../../actions/postAction";
 import { getCurrentUser } from "../../../actions/userAction";
 import PostView from "../../../pages/PostView";
-import { ContentTextArea } from "../../ContentTextArea2";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../ui/card";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 
 export default function CreatePost() {
-  const url: string | undefined = process.env.REACT_APP_URL;
-
-  const addPost = async (formData: FormData) => {
-    try {
-      const res = await fetch(url + "api/posts/create/", {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.error("Error adding post:", error);
-    }
-  };
-
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | undefined>();
   const [profil, setProfil] = useState("");
@@ -56,46 +37,28 @@ export default function CreatePost() {
     }
   };
 
+  if (!user) return <>no user</>;
+
   const handleClick: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
+
     const formData = new FormData(form);
 
     const description = formData.get("description") as string;
     const artist = formData.get("artist") as string;
     const title = formData.get("title") as string;
     const lyrics = formData.get("lyrics") as string;
+    const bodyContent = new FormData();
 
-    formData.append("posterId", user?._id || "");
-    formData.append("description", description || "");
-    formData.append("artist", artist || "");
-    formData.append("title", title || "");
-    formData.append("lyrics", lyrics || "");
-    if (file) {
-      formData.append("photo", file);
-    }
-    const forms = {
-      posterId: user?._id,
-      description,
-      artist,
-      title,
-      lyrics,
-      photo: file,
-    };
-    // try {
-    //   const res = await fetch(url + "api/posts/create/", {
-    //     method: "POST",
-    //     body: JSON.stringify(forms),
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   });
-    //   const data = await res.json();
-    //   console.log(data);
-    //   return data;
-    // } catch (error) {
-    //   console.error("Error adding post:", error);
-    // }
+    bodyContent.append("posterId", user._id);
+    bodyContent.append("artist", artist);
+    bodyContent.append("lyrics", lyrics);
+    bodyContent.append("title", title);
+    bodyContent.append("description", description);
+    bodyContent.append("photo", file || "");
+
+    createPost.mutate(bodyContent);
   };
 
   return (
@@ -108,7 +71,7 @@ export default function CreatePost() {
           <form onSubmit={handleClick}>
             <div className="space-y-1">
               <Label htmlFor="lyrics">Texte</Label>
-              <ContentTextArea name="lyrics" />
+              <Input name="lyrics" />
               <div className="text-sm text-red-600 "></div>
             </div>
             <div className="space-y-1">
@@ -131,7 +94,7 @@ export default function CreatePost() {
                 Pochette
                 <Image size={40} className="text-secondary-foreground/70" />
               </Label>
-              <Input
+              <input
                 className="hidden"
                 id="pochette"
                 name="pochette"
