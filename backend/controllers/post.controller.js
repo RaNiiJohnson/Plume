@@ -7,6 +7,7 @@ const {
   likeAndDislike,
   getPost,
   getAllPost,
+  commentPost,
 } = require("../services/post.service");
 
 module.exports.createPostController = async (req, res) => {
@@ -47,19 +48,6 @@ module.exports.deletePostController = async (req, res) => {
   }
 };
 
-module.exports.likeAndDislikeController = async (req, res) => {
-  try {
-    const post = await likeAndDislike(req.params, req.body);
-    res.status(200).json(post);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      message: "Post Like or dislike action failed",
-      err,
-    });
-  }
-};
-
 module.exports.getPostController = async (req, res) => {
   try {
     const post = await getPost(req.params);
@@ -94,14 +82,30 @@ module.exports.getAllPostController = async (req, res) => {
   }
 };
 
-module.exports.readFile = async (req, res) => {
-  const file = req.file;
-  fs.readFile(file, "utf8", (err, data) => {
-    if (err) {
-      res.status(500).send("Erreur de lecture du fichier");
-      yy;
-      return;
-    }
-    res.send(data);
-  });
+module.exports.likeAndDislikeController = async (req, res) => {
+  try {
+    const post = await likeAndDislike(req.params, req.body);
+    res.status(200).json(post);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Post Like or dislike action failed",
+      err,
+    });
+  }
 };
+
+module.exports.commentPostController = async (req, res) => {
+  try {
+    const post = await commentPost(req.params, req.body);
+    res.status(200).json(post);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "comment action failed",
+      err,
+    });
+  }
+};
+
+module.exports.editCommentPostController = async (req, res) => {};
