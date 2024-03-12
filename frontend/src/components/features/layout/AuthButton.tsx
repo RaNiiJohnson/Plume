@@ -2,7 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { FormEventHandler, useState } from "react";
-import { redirect } from "react-router";
+import { useParams } from "react-router";
 import { signOutFn } from "../../../actions/userAction";
 import { userDataType, userType } from "../../../utils/user.schema";
 import { Button } from "../../ui/button";
@@ -17,12 +17,14 @@ import {
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
-import { Profil } from "../users/Profil";
-export function AuthButton({ post }: { post?: string }) {
+import Profil from "../users/Profil";
+
+export function AuthButton({ post, flag }: { post?: string; flag?: boolean }) {
   const [pseudoSigninError, setPseudoSigninError] = useState("");
   const [passwordSigninError, setPasswordSigninError] = useState("");
   const [pseudoSignupError, setPseudoSignupError] = useState("");
   const [passwordSignupError, setPasswordSignupError] = useState("");
+  const { id } = useParams();
   const isLogged = !!localStorage.getItem("user");
 
   const queryClient = useQueryClient();
@@ -53,20 +55,9 @@ export function AuthButton({ post }: { post?: string }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      if (id) queryClient.invalidateQueries({ queryKey: ["Post", id] });
     },
   });
-  // export const signInFn = async (postData: Omit<userType, "_id">) => {
-  //   const res = await fetch(url + "api/users/signIn", {
-  //     method: "POST",
-  //     body: JSON.stringify(postData),
-  //     headers: {
-  //       "content-Type": "application/json",
-  //     },
-  //   });
-  //   const data: userDataType = await res.json();
-  //   return data;
-  // };
-
   const signIn = useMutation({
     mutationFn: async (userData: Omit<userType, "_id">) => {
       try {
@@ -91,14 +82,16 @@ export function AuthButton({ post }: { post?: string }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["Post", id] });
+      queryClient.invalidateQueries({ queryKey: ["Posts"] });
     },
   });
 
   const signOut = useMutation({
     mutationFn: signOutFn,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-      redirect("/#posts");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      if (id) queryClient.invalidateQueries({ queryKey: ["Post", id] });
     },
   });
 
@@ -115,6 +108,8 @@ export function AuthButton({ post }: { post?: string }) {
     };
 
     signUp.mutate(userData);
+    setPasswordSignupError("");
+    setPseudoSignupError("");
   };
   const handleSignIn: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -129,6 +124,8 @@ export function AuthButton({ post }: { post?: string }) {
     };
 
     signIn.mutate(userData);
+    setPseudoSigninError("");
+    setPasswordSigninError("");
   };
 
   return (
@@ -136,15 +133,25 @@ export function AuthButton({ post }: { post?: string }) {
       {!isLogged ? (
         <Dialog>
           <DialogTrigger asChild>
-            <Button
-              variant={"ghost"}
-              size={"sm"}
-              className={clsx({
-                "mix-blend-exclusion text-white": post,
-              })}
-            >
-              Connexion
-            </Button>
+            {flag ? (
+              <Button
+                variant={"link"}
+                size={"icon"}
+                className="mx-5 text-base text-secondary-foreground"
+              >
+                connecter
+              </Button>
+            ) : (
+              <Button
+                variant={"ghost"}
+                size={"sm"}
+                className={clsx({
+                  "mix-blend-exclusion text-white": post,
+                })}
+              >
+                Connexion
+              </Button>
+            )}
           </DialogTrigger>
           <DialogContent className="max-w-[450px] ">
             <DialogHeader>

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { ChangeEvent, ComponentPropsWithoutRef, forwardRef } from "react";
 import { Textarea } from "./ui/textarea";
 
-export const ContentTextArea2 = forwardRef<
+export const ContentTextArea = forwardRef<
   HTMLTextAreaElement,
   ComponentPropsWithoutRef<"textarea">
 >(({ onChange, className, rows = 1, ...props }, ref) => {
@@ -25,11 +25,11 @@ export const ContentTextArea2 = forwardRef<
         rows={rows}
         className={clsx(
           className,
-          "resize-none w-full bg-transparent outline-none  overflow-y-auto max-h-[180px] textarea"
+          "resize-none w-full bg-transparent outline-none  overflow-y-auto max-h-[400px] h-[200px] textarea"
         )}
         {...props}
       />
     );
 });
 
-ContentTextArea2.displayName = "ContentTextArea2";
+ContentTextArea.displayName = "ContentTextArea";

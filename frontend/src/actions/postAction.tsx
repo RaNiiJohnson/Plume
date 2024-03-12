@@ -1,4 +1,8 @@
-import { PostType, PostsResponseType } from "../utils/post.schema";
+import {
+  PostType,
+  PostUpdateSchemaType,
+  PostsResponseType,
+} from "../utils/post.schema";
 
 const url: string | undefined = process.env.REACT_APP_URL;
 
@@ -29,7 +33,7 @@ export const addPost = async (bodyContent: FormData) => {
       headers: headersList,
     });
 
-    const data = await response.text();
+    const data: PostType = await response.json();
     console.log(data);
     return data;
   } catch (error) {
@@ -37,8 +41,8 @@ export const addPost = async (bodyContent: FormData) => {
   }
 };
 
-// //like post
-export const likePost = async (postId: string, userId: string) => {
+//like post
+export const likePostFn = async (postId: string, userId: string) => {
   const headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -54,8 +58,9 @@ export const likePost = async (postId: string, userId: string) => {
     headers: headersList,
   });
 
-  const data = await response.text();
+  const data = await response.json();
   console.log(data);
+  return data;
 };
 
 //delete poste
@@ -75,13 +80,14 @@ export const deletePost = async (postId: string, posterId: string) => {
     headers: headersList,
   });
 
-  const data = await response.text();
+  const data = await response.json();
   console.log(data);
+  return data;
 };
 
 // update post
-export const updatePost = async (
-  postData: Omit<PostType, "comments">,
+export const updatePostFn = async (
+  postData: PostUpdateSchemaType,
   postId: string
 ) => {
   const headersList = {
@@ -89,9 +95,7 @@ export const updatePost = async (
     "Content-Type": "application/json",
   };
 
-  const bodyContent = JSON.stringify({
-    postData,
-  });
+  const bodyContent = JSON.stringify(postData);
 
   const response = await fetch(url + "api/posts/update-post/" + postId, {
     method: "PUT",
@@ -99,6 +103,53 @@ export const updatePost = async (
     headers: headersList,
   });
 
-  const data = await response.text();
+  const data = await response.json();
   console.log(data);
+  return data;
+};
+
+//upload pochette
+export const uploadPochetteFn = async (formData: FormData) => {
+  const headersList = {
+    Accept: "*/*",
+  };
+
+  const response = await fetch(url + "api/posts/upload-pochette/", {
+    method: "POST",
+    body: formData,
+    headers: headersList,
+  });
+
+  const data = await response.json();
+  console.log(data);
+  return data;
+};
+
+export type CommentType = {
+  commenterId: string;
+  name: string;
+  text: string;
+};
+
+//comment post
+export const commentPostFn = async (
+  commentData: CommentType,
+  postId: string
+) => {
+  const headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  const bodyContent = JSON.stringify(commentData);
+
+  const response = await fetch(url + "api/posts/comment-post/" + postId, {
+    method: "PATCH",
+    body: bodyContent,
+    headers: headersList,
+  });
+
+  const data = await response.json();
+  console.log(data);
+  return data;
 };
