@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { getPosts } from "../../../actions/postAction";
 import {
   Pagination,
@@ -62,9 +60,6 @@ export default function PostPagination() {
 
   return (
     <div className="flex flex-wrap mb-20 space-x-20 space-x-reverse">
-      <Link to={"/create-post"}>
-        <Link2 /> Publier
-      </Link>
       <Table className="max-w-2xl m-auto h-[665px] bg-secondary/25">
         <TableBody>
           {data?.posts.map((post, index) => (

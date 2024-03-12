@@ -2,15 +2,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Image, Undo } from "lucide-react";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import { Navigate, useNavigate } from "react-router";
 import { addPost } from "../../../actions/postAction";
 import { getCurrentUser } from "../../../actions/userAction";
-import PostView from "../../../pages/PostView";
+import { ContentTextArea2 } from "../../ContentTextArea2";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "../../ui/card";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 
 export default function CreatePost() {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [file, setFile] = useState<File | undefined>();
   const [profil, setProfil] = useState("");
@@ -37,7 +39,7 @@ export default function CreatePost() {
     }
   };
 
-  if (!user) return <>no user</>;
+  if (!user) return <Navigate to="/" replace={true} />;
 
   const handleClick: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -58,41 +60,48 @@ export default function CreatePost() {
     bodyContent.append("description", description);
     bodyContent.append("photo", file || "");
 
-    createPost.mutate(bodyContent);
+    const result = await createPost.mutateAsync(bodyContent);
+
+    navigate(`/post/${result?._id}`);
   };
 
   return (
     <div>
       <Card className="h-full max-w-lg m-auto mt-10">
         <CardHeader>
-          <CardDescription>Veuillez créer votre compte</CardDescription>
+          <CardDescription></CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <form onSubmit={handleClick}>
             <div className="space-y-1">
               <Label htmlFor="lyrics">Texte</Label>
-              <Input name="lyrics" />
+              <ContentTextArea2 required name="lyrics" placeholder="" />
               <div className="text-sm text-red-600 "></div>
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="artist">Artiste</Label>
-              <Input id="artist" name="artist" />
-              <div className="text-sm text-red-600 "></div>
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="title">Titre</Label>
-              <Input id="title" name="title" type="text" />
-              <div className="text-sm text-red-600 "></div>
+            <div className="flex gap-1">
+              <div className="space-y-1">
+                <Label htmlFor="artist">Artiste</Label>
+                <Input required id="artist" name="artist" />
+                <div className="text-sm text-red-600 "></div>
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="title">Titre</Label>
+                <Input required id="title" name="title" type="text" />
+                <div className="text-sm text-red-600 "></div>
+              </div>
             </div>
             <div className="space-y-1">
               <Label htmlFor="description">Description</Label>
               <Input id="description" name="description" type="text" />
               <div className="text-sm text-red-600 "></div>
             </div>
-            <div className="space-y-1">
+            <div className="pb-4 space-y-1">
               <Label htmlFor="pochette">
                 Pochette
-                <Image size={40} className="text-secondary-foreground/70" />
+                <Image
+                  size={40}
+                  className="block cursor-pointer text-secondary-foreground/70"
+                />
               </Label>
               <input
                 className="hidden"
@@ -129,7 +138,6 @@ export default function CreatePost() {
           </form>
         </CardContent>
       </Card>
-      <PostView />
     </div>
   );
 }

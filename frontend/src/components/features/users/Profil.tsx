@@ -8,6 +8,7 @@ import {
 import clsx from "clsx";
 import { Check, ImageUp, Undo } from "lucide-react";
 import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import { useNavigate } from "react-router";
 import { getCurrentUser, uploadFn } from "../../../actions/userAction";
 import {
   AlertDialog,
@@ -32,13 +33,14 @@ import {
 import { Table, TableBody } from "../../ui/table";
 
 type setType = {
-  signOut: UseMutationResult<void, Error, void, unknown>;
+  signOut: UseMutationResult<Response | undefined, Error, void, unknown>;
 };
 
-export function Profil({ signOut }: setType) {
+export default function Profil({ signOut }: setType) {
   const [file, setFile] = useState<File>();
   const [profil, setProfil] = useState("");
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: user } = useQuery({
     queryKey: ["currentUser"],
@@ -88,8 +90,8 @@ export function Profil({ signOut }: setType) {
   return (
     <Sheet>
       <SheetTrigger>
-        <Avatar className="w-6 h-6 mr-2">
-          <img crossOrigin="anonymous" src={user?.picture}></img>
+        <Avatar className="w-6 h-6 ml-2">
+          <img crossOrigin="anonymous" src={user?.picture} />
         </Avatar>
       </SheetTrigger>
       <SheetContent>
@@ -103,10 +105,10 @@ export function Profil({ signOut }: setType) {
               id="file"
               accept=".jpg, .jpeg, .png"
             />
-            <div className="relative justify-center flex m-auto bg-blue-600 size-[25vh]">
+            <div className="relative justify-center flex m-auto  size-[25vh]">
               <label htmlFor="file">
                 <img
-                  className="cursor-pointer size-[25vh] bg-cover"
+                  className="cursor-pointer size-[25vh] object-cover "
                   crossOrigin="anonymous"
                   src={profil ? profil : user?.picture}
                 />
@@ -218,6 +220,7 @@ export function Profil({ signOut }: setType) {
                 <Button
                   onClick={() => {
                     signOut.mutate();
+                    navigate(0);
                   }}
                   disabled={signOut.isPending}
                 >

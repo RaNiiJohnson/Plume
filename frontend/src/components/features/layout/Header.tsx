@@ -1,19 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import ColorThief from "colorthief";
+import { PenBox } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getPost } from "../../../actions/postAction";
+import { getCurrentUser } from "../../../actions/userAction";
 import { ThemeToggle } from "../../ThemeToggle";
+import { Button } from "../../ui/button";
 import { AuthButton } from "./AuthButton";
 
 export default function Header() {
   const [backgroundColor, setBackgroundColor] = useState("");
   const { id } = useParams();
+
   const { data: post } = useQuery({
     queryKey: ["Post", id],
     queryFn: () => getPost(String(id)),
     enabled: Boolean(id),
+  });
+
+  const { data: user } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUser,
   });
 
   if (post) {
@@ -38,23 +47,34 @@ export default function Header() {
       style={post && { backgroundColor: backgroundColor }}
     >
       <div
-        className={clsx("container w-full max-w-5xl m-auto max-sm:px-2 ", {
-          "mix-blend-exclusion ": post,
+        className={clsx("container w-full max-w-7xl m-auto max-sm:px-2 ", {
+          "mix-blend-difference ": post,
         })}
       >
         <div className="flex items-center h-16 space-x-4 sm:justify-between sm:space-x-0">
           <div className="flex items-center justify-center pl-2 pr-3 text-xl rounded-md font-protest text-primary">
-            <a href="/#posts" className="flex items-center gap-1">
+            <Link to="/#posts" className="flex items-center gap-1">
               Plume
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center justify-end flex-1 space-x-4">
             <nav className="z-50 flex items-center gap-10 space-x-1">
               {/* <SearchBar /> */}
               <div className="flex items-center gap-2">
-                <AuthButton post={post?._id} />
+                {user && (
+                  <Button
+                    className={clsx({ "text-white": post })}
+                    variant="ghost"
+                    size="icon"
+                  >
+                    <Link to={"/create-post"}>
+                      <PenBox size={20} />
+                    </Link>
+                  </Button>
+                )}
                 <ThemeToggle post={post?._id} />
+                <AuthButton post={post?._id} />
               </div>
             </nav>
           </div>
