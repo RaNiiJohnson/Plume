@@ -3,15 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "../actions/postAction";
 import { getUsers } from "../actions/userAction";
-import { Welcome } from "../components/Welcome";
 import { Spotlight } from "../components/ui/Spotlight";
+import { Dashboard } from "./Dashboard";
 
 function Home() {
-  const {
-    data: dataPost,
-    isError: postError,
-    isLoading: postLoading,
-  } = useQuery({
+  const { isError: postError, isLoading: postLoading } = useQuery({
     queryKey: ["posts"],
     queryFn: () => getPosts,
   });
@@ -35,8 +31,7 @@ function Home() {
           fill="white"
         />
       </div>
-      <Welcome />
-      <div id="posts"></div>
+      <Dashboard />
     </>
   );
 }

@@ -9,21 +9,21 @@ export const formatDate = (date: Date | string) => {
   const diffInYears = Math.floor(diffInMonths / 12);
 
   if (diffInYears > 0) {
-    return `il y a ${diffInYears}y`;
+    return `${diffInYears}an`;
   }
   if (diffInMonths > 0) {
-    return `il y a ${diffInMonths}m`;
+    return `${diffInMonths}m`;
   }
   if (diffInDays > 0) {
-    return `il y a ${diffInDays}d`;
+    return `${diffInDays}j`;
   }
   if (diffInHours > 0) {
-    return `il y a ${diffInHours}h`;
+    return `${diffInHours}h`;
   }
   if (diffInMinutes > 0) {
-    return `il y a ${diffInMinutes}m`;
+    return `${diffInMinutes}m`;
   }
-  return "now";
+  return "maintenant";
 };
 export const formatProfilDate = (date: Date | string) => {
   const dateObj = date instanceof Date ? date : new Date(date);
