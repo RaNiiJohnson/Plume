@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import ColorThief from "colorthief";
 import { PenBox } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getPost } from "../../../actions/postAction";
 import { getCurrentUser } from "../../../actions/userAction";
@@ -25,21 +25,29 @@ export default function Header() {
     queryFn: getCurrentUser,
   });
 
-  if (post) {
-    const imageUrl = post.pochette;
-    const thief = new ColorThief();
+  useEffect(() => {
+    if (post) {
+      const imageUrl = post.pochette;
+      const thief = new ColorThief();
 
-    const image = new Image();
-    image.crossOrigin = "Anonymous";
-    image.src = imageUrl;
+      const image = new Image();
+      image.crossOrigin = "Anonymous";
+      image.src = imageUrl;
 
-    image.onload = () => {
-      const dominantColor = thief.getColor(image);
-      const rgbColor = `rgb(${dominantColor.join(",")})`;
-      console.log(rgbColor);
-      setBackgroundColor(rgbColor);
-    };
-  }
+      const handleImageLoad = () => {
+        const dominantColor = thief.getColor(image);
+        const rgbColor = `rgb(${dominantColor.join(",")})`;
+        console.log(rgbColor);
+        setBackgroundColor(rgbColor);
+      };
+
+      image.onload = handleImageLoad;
+
+      return () => {
+        image.onload = null; // Clean up event listener
+      };
+    }
+  }, [post, setBackgroundColor]);
 
   return (
     <div
@@ -53,7 +61,7 @@ export default function Header() {
       >
         <div className="flex items-center h-16 space-x-4 sm:justify-between sm:space-x-0">
           <div className="flex items-center justify-center pl-2 pr-3 text-xl rounded-md font-protest text-primary">
-            <Link to="/#posts" className="flex items-center gap-1">
+            <Link to="/" className="flex items-center gap-1">
               Plume
             </Link>
           </div>

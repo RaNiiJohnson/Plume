@@ -137,7 +137,7 @@ export function AuthButton({ post, flag }: { post?: string; flag?: boolean }) {
               <Button
                 variant={"link"}
                 size={"icon"}
-                className="mx-5 text-base text-secondary-foreground"
+                className="mx-5 text-sm text-secondary-foreground"
               >
                 connecter
               </Button>
