@@ -1,19 +1,25 @@
 const router = require("express").Router();
-const postController = require("../controllers/post.controller");
-const createPost = require("../controllers/upload.post.controller");
-const uploadPochette = require("../controllers/upload.pochette");
+import {
+  commentPostController,
+  deletePostController,
+  getAllPostController,
+  getPostController,
+  likeAndDislikeController,
+  updatePostController,
+} from "../controllers/post.controller";
+import {
+  upload as _upload,
+  uploadImage as _uploadImage,
+} from "../controllers/upload.pochette";
+import { upload, uploadImage } from "../controllers/upload.post.controller";
 
-router.get("/", postController.getAllPostController);
-router.get("/:id", postController.getPostController);
-router.post("/create", createPost.uploadImage, createPost.upload);
-router.post(
-  "/upload-pochette",
-  uploadPochette.uploadImage,
-  uploadPochette.upload
-);
-router.put("/update-post/:id", postController.updatePostController);
-router.put("/like-post/:id", postController.likeAndDislikeController);
-router.delete("/delete-post/:id", postController.deletePostController);
-router.patch("/comment-post/:id", postController.commentPostController);
+router.get("/", getAllPostController);
+router.get("/:id", getPostController);
+router.post("/create", uploadImage, upload);
+router.post("/upload-pochette", _uploadImage, _upload);
+router.put("/update-post/:id", updatePostController);
+router.put("/like-post/:id", likeAndDislikeController);
+router.delete("/delete-post/:id", deletePostController);
+router.patch("/comment-post/:id", commentPostController);
 
-module.exports = router;
+export default router;

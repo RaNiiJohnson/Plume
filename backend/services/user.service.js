@@ -1,15 +1,19 @@
-const bcrypt = require("bcrypt");
-const UserModel = require("../models/user.model");
-module.exports.updateUser = async (userId, updateData) => {
+import { hashSync } from "bcrypt";
+import {
+  findByIdAndUpdate,
+  findByIdAndDelete,
+  findById,
+} from "../models/user.model";
+export async function updateUser(userId, updateData) {
   if (updateData.password) {
     try {
-      updateData.password = await bcrypt.hashSync(updateData.password, 10);
+      updateData.password = await hashSync(updateData.password, 10);
     } catch (err) {
       throw err;
     }
   }
   try {
-    const user = await UserModel.findByIdAndUpdate(
+    const user = await findByIdAndUpdate(
       userId,
       {
         $set: updateData,
@@ -22,19 +26,19 @@ module.exports.updateUser = async (userId, updateData) => {
   } catch (err) {
     throw err;
   }
-};
-module.exports.deleteUser = async (userId) => {
+}
+export async function deleteUser(userId) {
   try {
-    await UserModel.findByIdAndDelete(userId);
+    await findByIdAndDelete(userId);
   } catch (err) {
     throw err;
   }
-};
-module.exports.getUser = async (userId) => {
+}
+export async function getUser(userId) {
   try {
-    const user = await UserModel.findById(userId);
+    const user = await findById(userId);
     return user;
   } catch (err) {
     throw err;
   }
-};
+}

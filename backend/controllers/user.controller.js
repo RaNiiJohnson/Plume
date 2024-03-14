@@ -1,15 +1,15 @@
-const UserModel = require("../models/user.model");
+import UserModel from "../models/user.model";
 
-module.exports.getUserController = async (userId) => {
+export async function getUserController(userId) {
   try {
     const user = await UserModel.findById(userId).select("-password");
     return user;
   } catch (err) {
     throw err;
   }
-};
+}
 
-module.exports.getAllUserController = async (req, res) => {
+export async function getAllUserController(req, res) {
   try {
     const user = await UserModel.find()
       .sort({ createdAt: -1 })
@@ -22,4 +22,4 @@ module.exports.getAllUserController = async (req, res) => {
       err,
     });
   }
-};
+}

@@ -1,5 +1,10 @@
-const PostModel = require("../models/post.model");
-module.exports.createPost = async (body) => {
+import PostModel, {
+  findById,
+  deleteOne,
+  find,
+  findByIdAndUpdate,
+} from "../models/post.model";
+export async function createPost(body) {
   try {
     const newPost = new PostModel(body);
 
@@ -9,11 +14,11 @@ module.exports.createPost = async (body) => {
   } catch (error) {
     throw error;
   }
-};
+}
 
-module.exports.updatePost = async (params, body) => {
+export async function updatePost(params, body) {
   try {
-    const updatedPost = await PostModel.findById(params.id);
+    const updatedPost = await findById(params.id);
     if (updatedPost.posterId === body.posterId) {
       await updatedPost.updateOne({
         $set: body,
@@ -25,13 +30,13 @@ module.exports.updatePost = async (params, body) => {
   } catch (error) {
     throw error;
   }
-};
+}
 
-module.exports.deletePost = async (params, body) => {
+export async function deletePost(params, body) {
   try {
-    const deletedPost = await PostModel.findById(params.id);
+    const deletedPost = await findById(params.id);
     if (deletedPost.posterId === body.posterId) {
-      await PostModel.deleteOne();
+      await deleteOne();
       return deletedPost;
     } else {
       throw new Error("You can delete only your post");
@@ -39,29 +44,29 @@ module.exports.deletePost = async (params, body) => {
   } catch (error) {
     throw error;
   }
-};
+}
 
-module.exports.getPost = async (params) => {
+export async function getPost(params) {
   try {
-    const post = await PostModel.findById(params.id);
+    const post = await findById(params.id);
     return post;
   } catch (error) {
     throw error;
   }
-};
+}
 
-module.exports.getAllPost = async () => {
+export async function getAllPost() {
   try {
-    const post = await PostModel.find().sort({ createdAt: -1 });
+    const post = await find().sort({ createdAt: -1 });
     return post;
   } catch (error) {
     throw error;
   }
-};
+}
 
-module.exports.likeAndDislike = async (params, body) => {
+export async function likeAndDislike(params, body) {
   try {
-    const post = await PostModel.findById(params.id);
+    const post = await findById(params.id);
     if (!post.likers.includes(body.posterId)) {
       await post.updateOne({ $push: { likers: body.posterId } });
     } else {
@@ -72,11 +77,11 @@ module.exports.likeAndDislike = async (params, body) => {
   } catch (error) {
     throw error;
   }
-};
+}
 
-module.exports.commentPost = async (params, body) => {
+export async function commentPost(params, body) {
   try {
-    const post = await PostModel.findByIdAndUpdate(
+    const post = await findByIdAndUpdate(
       { _id: params.id },
       {
         $push: {
@@ -93,11 +98,11 @@ module.exports.commentPost = async (params, body) => {
   } catch (error) {
     console.log(error);
   }
-};
+}
 
-module.exports.editCommentPost = async (params, body) => {
+export async function editCommentPost(params, body) {
   try {
-    await PostModel.findByIdAndUpdate(
+    await findByIdAndUpdate(
       { _id: params.id },
       {
         $pull: {
@@ -117,7 +122,7 @@ module.exports.editCommentPost = async (params, body) => {
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 // module.exports.updatePost = async (params, body) => {
 //   try {

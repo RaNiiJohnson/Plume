@@ -1,4 +1,4 @@
-module.exports.signUpErrors = (err) => {
+export function signUpErrors(err) {
   let errors = { pseudo: "", password: "" };
 
   if (err.message.includes("pseudo")) errors.pseudo = "Pseudo incorrect.";
@@ -13,9 +13,9 @@ module.exports.signUpErrors = (err) => {
     errors.pseudo = "Ce pseudo est déjà pris.";
 
   return errors;
-};
+}
 
-module.exports.signInErrors = (err) => {
+export function signInErrors(err) {
   let errors = { pseudo: "", password: "" };
 
   if (err.message.includes("pseudo")) errors.pseudo = "Pseudo inconnu";
@@ -24,7 +24,7 @@ module.exports.signInErrors = (err) => {
     errors.password = "Le mot de passe ne correspond pas";
 
   return errors;
-};
+}
 
 // module.exports.uploadErrors = (err) => {
 //   let errors = { format: "", maxSize: "" };

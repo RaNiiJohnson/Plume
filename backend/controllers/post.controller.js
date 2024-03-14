@@ -1,16 +1,14 @@
-const fs = require("fs");
-const PostModel = require("../models/post.model");
-const {
+import PostModel from "../models/post.model";
+import {
   createPost,
   updatePost,
   deletePost,
   likeAndDislike,
   getPost,
-  getAllPost,
   commentPost,
-} = require("../services/post.service");
+} from "../services/post.service";
 
-module.exports.createPostController = async (req, res) => {
+export async function createPostController(req, res) {
   try {
     const post = await createPost(req.body);
     return res.status(200).json({ message: "Post created Successfully", post });
@@ -21,9 +19,9 @@ module.exports.createPostController = async (req, res) => {
       error: err.message,
     });
   }
-};
+}
 
-module.exports.updatePostController = async (req, res) => {
+export async function updatePostController(req, res) {
   try {
     const updatedPost = await updatePost(req.params, req.body);
     res.status(200).json(updatedPost);
@@ -34,8 +32,8 @@ module.exports.updatePostController = async (req, res) => {
       err,
     });
   }
-};
-module.exports.deletePostController = async (req, res) => {
+}
+export async function deletePostController(req, res) {
   try {
     const deletedPost = await deletePost(req.params, req.body);
     res.status(200).json(deletedPost);
@@ -46,9 +44,9 @@ module.exports.deletePostController = async (req, res) => {
       err,
     });
   }
-};
+}
 
-module.exports.getPostController = async (req, res) => {
+export async function getPostController(req, res) {
   try {
     const post = await getPost(req.params);
     res.status(200).json(post);
@@ -59,9 +57,9 @@ module.exports.getPostController = async (req, res) => {
       err,
     });
   }
-};
+}
 
-module.exports.getAllPostController = async (req, res) => {
+export async function getAllPostController(req, res) {
   const page = parseInt(req.query.page) || 1; // numéro de page
   const perPage = parseInt(req.query.perPage) || 10; //  nombre d'éléments par page
 
@@ -80,9 +78,9 @@ module.exports.getAllPostController = async (req, res) => {
     console.error("Error fetching posts:", error);
     res.status(500).json({ message: "Error fetching posts", error });
   }
-};
+}
 
-module.exports.likeAndDislikeController = async (req, res) => {
+export async function likeAndDislikeController(req, res) {
   try {
     const post = await likeAndDislike(req.params, req.body);
     res.status(200).json(post);
@@ -93,9 +91,9 @@ module.exports.likeAndDislikeController = async (req, res) => {
       err,
     });
   }
-};
+}
 
-module.exports.commentPostController = async (req, res) => {
+export async function commentPostController(req, res) {
   try {
     const post = await commentPost(req.params, req.body);
     res.status(200).json(post);
@@ -106,6 +104,6 @@ module.exports.commentPostController = async (req, res) => {
       err,
     });
   }
-};
+}
 
-module.exports.editCommentPostController = async (req, res) => {};
+export async function editCommentPostController(req, res) {}

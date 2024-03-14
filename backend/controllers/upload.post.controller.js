@@ -1,9 +1,9 @@
-const multer = require("multer");
-const { createPost } = require("../services/post.service");
-const PostModel = require("../models/post.model");
+import multer, { diskStorage } from "multer";
+import { createPost } from "../services/post.service";
+import PostModel from "../models/post.model";
 
 let filename;
-const multerConfig = multer.diskStorage({
+const multerConfig = diskStorage({
   destination: (req, file, callback) => {
     callback(null, "./uploads/pochettes/");
   },
@@ -27,9 +27,9 @@ const upload = multer({
   fileFilter: isImage,
 });
 
-module.exports.uploadImage = upload.single("photo");
+export const uploadImage = upload.single("photo");
 
-module.exports.upload = async (req, res) => {
+const _upload = async (req, res) => {
   console.log(req.file);
   try {
     const { posterId, description, artist, title, lyrics } = req.body;
@@ -50,3 +50,4 @@ module.exports.upload = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+export { _upload as upload };

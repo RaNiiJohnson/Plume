@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const postSchema = new mongoose.Schema(
+const postSchema = new Schema(
   {
     posterId: {
       type: String,
@@ -47,6 +47,6 @@ const postSchema = new mongoose.Schema(
   }
 );
 
-const PostModel = mongoose.model("post", postSchema);
+const PostModel = model("post", postSchema);
 
-module.exports = PostModel;
+export default PostModel;

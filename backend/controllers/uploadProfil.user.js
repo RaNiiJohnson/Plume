@@ -1,8 +1,8 @@
-const multer = require("multer");
-const UserModel = require("../models/user.model");
+import multer, { diskStorage } from "multer";
+import UserModel from "../models/user.model";
 
 let filename;
-const multerConfig = multer.diskStorage({
+const multerConfig = diskStorage({
   destination: (req, file, callback) => {
     callback(null, "./uploads/users/");
   },
@@ -26,9 +26,9 @@ const upload = multer({
   fileFilter: isImage,
 });
 
-module.exports.uploadImage = upload.single("photo");
+export const uploadImage = upload.single("photo");
 
-module.exports.upload = async (req, res) => {
+const _upload = async (req, res) => {
   const pictureUrl = process.env.BASE_URL + "users/" + filename;
 
   try {
@@ -47,3 +47,4 @@ module.exports.upload = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+export { _upload as upload };

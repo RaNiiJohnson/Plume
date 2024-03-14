@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+import { hash as _hash, compare, genSalt } from "bcrypt";
+import { Schema, model } from "mongoose";
 
 const strongPasswordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     pseudo: {
       type: String,
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
 // });
 
 userSchema.statics.signUp = async function (pseudo, password) {
-  const salt = await bcrypt.genSalt();
+  const salt = await genSalt();
 
   const exist = await this.findOne({ pseudo });
 
@@ -57,7 +57,7 @@ userSchema.statics.signUp = async function (pseudo, password) {
     throw new Error("no-pass");
   }
 
-  const hash = await bcrypt.hash(password, salt);
+  const hash = await _hash(password, salt);
 
   const user = await this.create({ pseudo, password: hash });
 
@@ -67,7 +67,7 @@ userSchema.statics.signUp = async function (pseudo, password) {
 userSchema.statics.signIn = async function (pseudo, password) {
   const user = await this.findOne({ pseudo });
   if (user) {
-    const auth = await bcrypt.compare(password, user.password);
+    const auth = await compare(password, user.password);
     if (auth) {
       return user;
     }
@@ -76,6 +76,6 @@ userSchema.statics.signIn = async function (pseudo, password) {
   throw Error("Incorrect pseudo");
 };
 
-const UserModel = mongoose.model("user", userSchema);
+const UserModel = model("user", userSchema);
 
-module.exports = UserModel;
+export default UserModel;
