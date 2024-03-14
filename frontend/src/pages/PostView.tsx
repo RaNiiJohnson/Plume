@@ -65,7 +65,7 @@ export default function PostView() {
         const dominantColor = thief.getColor(image);
         const result = thief.getPalette(image);
         const rgbColor = `rgb(${dominantColor.join(",")})`;
-        const rgbColorPrime = `rgb(${result[result.length - 1].join(",")})`;
+        const rgbColorPrime = `rgb(${result[result.length - 3].join(",")})`;
         console.log(dominantColor);
         // console.log(rgbColorPrime);
         setBackgroundColor(rgbColorPrime);
