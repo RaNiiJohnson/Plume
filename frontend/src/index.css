@@ -83,5 +83,5 @@ body::-webkit-scrollbar-thumb,
 
 @font-face {
   font-family: "victor";
-  src: url("../public/Victor_Mono/static/VictorMono-SemiBold.ttf");
+  src: url("/static/VictorMono-Medium.ttf");
 }
